@@ -29,7 +29,8 @@
   let seniorMode  = getStorage(STORAGE_SENIOR_MODE) === "true";
   let currentView = "home";
   let viewParams  = {};
-  let trackFilter = "all";
+  let trackFilter     = "all";
+  let homeFilter      = "all";
   let searchTimeout = null;
   let quizState   = {};
 
@@ -459,10 +460,13 @@
     if (!bar) return;
     const filters = ["all", "beginner", "intermediate", "senior"];
     bar.innerHTML = filters.map((f) =>
-      `<button type="button" class="filter-chip ${trackFilter === f ? "active" : ""}" data-filter="${f}">${t("filter." + f)}</button>`
+      `<button type="button" class="filter-chip ${homeFilter === f ? "active" : ""}" data-filter="${f}">${t("filter." + f)}</button>`
     ).join("");
     bar.querySelectorAll(".filter-chip").forEach((btn) => {
-      btn.addEventListener("click", () => { trackFilter = btn.dataset.filter; renderHome(); });
+      btn.addEventListener("click", () => {
+        homeFilter = btn.dataset.filter;
+        renderHome();
+      });
     });
   }
 
@@ -474,9 +478,13 @@
 
     renderHomeFilterBar();
 
+    const filtered = homeFilter === "all"
+      ? sortTracksForPersona(tracks)
+      : tracks.filter((tr) => TRACK_AUDIENCE[tr.id] === homeFilter);
+
     const grid = document.getElementById("home-tracks-grid");
     grid.innerHTML = "";
-    filterTracks(sortTracksForPersona(tracks)).forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
+    filtered.forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
     renderContinueBanner();
   }
 
@@ -489,7 +497,10 @@
       `<button type="button" class="filter-chip ${trackFilter === f ? "active" : ""}" data-filter="${f}">${t("filter." + f)}</button>`
     ).join("");
     bar.querySelectorAll(".filter-chip").forEach((btn) => {
-      btn.addEventListener("click", () => { trackFilter = btn.dataset.filter; renderTracksPage(); });
+      btn.addEventListener("click", () => {
+        trackFilter = btn.dataset.filter;
+        renderTracksPage();
+      });
     });
   }
 
@@ -497,7 +508,10 @@
     renderFilterBar();
     const grid = document.getElementById("tracks-grid");
     grid.innerHTML = "";
-    filterTracks(sortTracksForPersona(tracks)).forEach((tr) => renderTrackCard(tr, "tracks-grid", { showRecommend: true }));
+    const filtered = trackFilter === "all"
+      ? sortTracksForPersona(tracks)
+      : tracks.filter((tr) => TRACK_AUDIENCE[tr.id] === trackFilter);
+    filtered.forEach((tr) => renderTrackCard(tr, "tracks-grid", { showRecommend: true }));
   }
 
   // ── Roadmap ───────────────────────────────────────────────────────────────
