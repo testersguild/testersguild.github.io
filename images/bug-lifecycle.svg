@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="340" viewBox="0 0 760 340" role="img" aria-label="Diagrama do ciclo de vida de um bug">
+  <rect width="760" height="340" rx="24" fill="#0f172a"/>
+  <text x="380" y="48" text-anchor="middle" font-size="24" fill="#f8fafc" font-family="Segoe UI, Arial, sans-serif">Ciclo de vida de um bug</text>
+  <rect x="60" y="100" width="120" height="60" rx="14" fill="#22c55e"/>
+  <text x="120" y="138" text-anchor="middle" font-size="16" fill="#052e16" font-family="Segoe UI, Arial, sans-serif">Encontrado</text>
+  <rect x="230" y="100" width="120" height="60" rx="14" fill="#38bdf8"/>
+  <text x="290" y="138" text-anchor="middle" font-size="16" fill="#082f49" font-family="Segoe UI, Arial, sans-serif">Reportado</text>
+  <rect x="400" y="100" width="120" height="60" rx="14" fill="#f59e0b"/>
+  <text x="460" y="138" text-anchor="middle" font-size="16" fill="#431407" font-family="Segoe UI, Arial, sans-serif">Em análise</text>
+  <rect x="570" y="100" width="130" height="60" rx="14" fill="#f43f5e"/>
+  <text x="635" y="138" text-anchor="middle" font-size="16" fill="#fff1f2" font-family="Segoe UI, Arial, sans-serif">Corrigido</text>
+  <path d="M180 130 L230 130" stroke="#f8fafc" stroke-width="3" fill="none"/>
+  <path d="M350 130 L400 130" stroke="#f8fafc" stroke-width="3" fill="none"/>
+  <path d="M520 130 L570 130" stroke="#f8fafc" stroke-width="3" fill="none"/>
+  <text x="380" y="220" text-anchor="middle" font-size="16" fill="#e2e8f0" font-family="Segoe UI, Arial, sans-serif">Um relatório bem escrito acelera a análise e reduz retrabalho.</text>
+</svg>

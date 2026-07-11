@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360" role="img" aria-label="Diagrama da pirâmide de testes">
+  <rect width="720" height="360" rx="24" fill="#0f172a"/>
+  <text x="360" y="54" text-anchor="middle" font-size="24" fill="#f8fafc" font-family="Segoe UI, Arial, sans-serif">Pirâmide de testes</text>
+  <rect x="200" y="95" width="320" height="92" rx="16" fill="#22c55e" opacity="0.95"/>
+  <text x="360" y="140" text-anchor="middle" font-size="20" fill="#052e16" font-family="Segoe UI, Arial, sans-serif">Unitários</text>
+  <text x="360" y="164" text-anchor="middle" font-size="14" fill="#052e16" font-family="Segoe UI, Arial, sans-serif">muitos, rápidos e baratos</text>
+  <rect x="230" y="195" width="260" height="82" rx="16" fill="#38bdf8" opacity="0.95"/>
+  <text x="360" y="240" text-anchor="middle" font-size="20" fill="#082f49" font-family="Segoe UI, Arial, sans-serif">Integração</text>
+  <text x="360" y="264" text-anchor="middle" font-size="14" fill="#082f49" font-family="Segoe UI, Arial, sans-serif">alguns, mais valiosos</text>
+  <rect x="260" y="288" width="200" height="62" rx="16" fill="#f59e0b" opacity="0.95"/>
+  <text x="360" y="324" text-anchor="middle" font-size="20" fill="#431407" font-family="Segoe UI, Arial, sans-serif">E2E</text>
+  <text x="360" y="346" text-anchor="middle" font-size="14" fill="#431407" font-family="Segoe UI, Arial, sans-serif">poucos, lentos e caros</text>
+</svg>
