@@ -454,15 +454,29 @@
 
 
   // ── Home ──────────────────────────────────────────────────────────────────
+  function renderHomeFilterBar() {
+    const bar = document.getElementById("home-filter-bar");
+    if (!bar) return;
+    const filters = ["all", "beginner", "intermediate", "senior"];
+    bar.innerHTML = filters.map((f) =>
+      `<button type="button" class="filter-chip ${trackFilter === f ? "active" : ""}" data-filter="${f}">${t("filter." + f)}</button>`
+    ).join("");
+    bar.querySelectorAll(".filter-chip").forEach((btn) => {
+      btn.addEventListener("click", () => { trackFilter = btn.dataset.filter; renderHome(); });
+    });
+  }
+
   function renderHome() {
     const global = getGlobalProgress();
     document.getElementById("stat-lessons").textContent = global.total;
     document.getElementById("stat-tracks").textContent  = tracks.length;
     document.querySelectorAll(".persona-card").forEach((el) => el.classList.toggle("active", el.dataset.persona === persona));
 
+    renderHomeFilterBar();
+
     const grid = document.getElementById("home-tracks-grid");
     grid.innerHTML = "";
-    sortTracksForPersona(tracks).forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
+    filterTracks(sortTracksForPersona(tracks)).forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
     renderContinueBanner();
   }
 

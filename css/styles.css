@@ -1,13 +1,13 @@
 /* Testers Guild QA Course — Synthwave Edition */
 
 :root {
-  /* Synthwave dark palette */
-  --bg:           #1a1a2e;
-  --bg-card:      #16213e;
-  --bg-elevated:  #0f3460;
-  --border:       #2d2d5e;
-  --text:         #f0e6ff;
-  --text-muted:   #a89bc2;
+  /* Charcoal / Graphite dark palette */
+  --bg:           #1a1a1a;
+  --bg-card:      #222222;
+  --bg-elevated:  #2e2e2e;
+  --border:       #3a3a3a;
+  --text:         #f0f0f0;
+  --text-muted:   #9a9a9a;
 
   /* Cyan as primary accent */
   --accent:       #00e5ff;
@@ -82,7 +82,7 @@ a:hover { text-decoration: underline; }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(26, 26, 46, 0.88);
+  background: rgba(26, 26, 26, 0.92);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(0, 229, 255, 0.15);
   padding: 0.75rem 1.5rem;
@@ -297,7 +297,7 @@ a:hover { text-decoration: underline; }
 
 .btn-primary {
   background: linear-gradient(135deg, #00e5ff, #00b8d4);
-  color: #0f0f23;
+  color: #1a1a1a;
   box-shadow: 0 4px 22px rgba(0, 229, 255, 0.35);
   font-weight: 700;
 }
@@ -855,7 +855,7 @@ a:hover { text-decoration: underline; }
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background: #16213e;
+  background: #2e2e2e;
   border: 1px solid var(--accent);
   color: var(--text);
   padding: 0.85rem 1.25rem;
@@ -943,7 +943,7 @@ a:hover { text-decoration: underline; }
 
 .tier-beginner     { background: rgba(0, 229, 255, 0.12);  color: #00e5ff; }
 .tier-intermediate { background: rgba(255, 45, 120, 0.12); color: #ff2d78; }
-.tier-senior       { background: rgba(189, 0, 255, 0.14);  color: #d966ff; }
+.tier-senior       { background: rgba(160, 160, 160, 0.14); color: #c0c0c0; }
 
 .track-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem; }
 
@@ -983,7 +983,7 @@ a:hover { text-decoration: underline; }
 }
 
 .filter-chip:hover { border-color: var(--accent); color: var(--text); }
-.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #0f0f23; font-weight: 700; }
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #1a1a1a; font-weight: 700; }
 
 /* Lesson enrichment boxes */
 .lesson-header-row {
@@ -1012,12 +1012,12 @@ a:hover { text-decoration: underline; }
 .lesson-box-beginner h3 { color: #00e5ff; }
 
 .lesson-box-senior {
-  background: rgba(255, 45, 120, 0.07);
-  border: 1px solid rgba(255, 45, 120, 0.22);
+  background: rgba(160, 160, 160, 0.07);
+  border: 1px solid rgba(160, 160, 160, 0.22);
   margin-top: 1.5rem;
 }
 
-.lesson-box-senior h3 { color: #ff2d78; }
+.lesson-box-senior h3 { color: #c0c0c0; }
 
 .lesson-box p { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
 
@@ -1048,7 +1048,7 @@ a:hover { text-decoration: underline; }
   width: 32px;
   height: 32px;
   background: linear-gradient(135deg, #00e5ff, #ff2d78);
-  color: #0f0f23;
+  color: #1a1a1a;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1100,36 +1100,36 @@ a:hover { text-decoration: underline; }
 
 
 /* ═══════════════════════════════════════════════════
-   LIGHT THEME — Synthwave Day
+   LIGHT THEME — Graphite Day
 ═══════════════════════════════════════════════════ */
 [data-theme="light"] {
-  --bg:           #f5f0ff;
+  --bg:           #f2f2f2;
   --bg-card:      #ffffff;
-  --bg-elevated:  #ede8f8;
-  --border:       #d0c8e8;
-  --text:         #1a1030;
-  --text-muted:   #5a4a78;
+  --bg-elevated:  #e8e8e8;
+  --border:       #d0d0d0;
+  --text:         #1a1a1a;
+  --text-muted:   #666666;
   --accent:       #0099bb;
   --accent-hover: #007799;
   --accent-glow:  rgba(0, 153, 187, 0.2);
   --pink:         #cc005a;
   --pink-hover:   #aa0048;
-  --shadow:       0 4px 24px rgba(100, 0, 100, 0.1);
+  --shadow:       0 4px 24px rgba(0, 0, 0, 0.10);
 }
 
 [data-theme="light"] body::before {
   background:
-    radial-gradient(ellipse 70% 45% at 10% -5%,  rgba(0, 153, 187, 0.08), transparent),
-    radial-gradient(ellipse 55% 40% at 90% 5%,   rgba(204, 0, 90, 0.07),  transparent);
+    radial-gradient(ellipse 70% 45% at 10% -5%,  rgba(0, 153, 187, 0.07), transparent),
+    radial-gradient(ellipse 55% 40% at 90% 5%,   rgba(204, 0, 90, 0.06),  transparent);
 }
 
 [data-theme="light"] .header {
-  background: rgba(245, 240, 255, 0.92);
+  background: rgba(242, 242, 242, 0.94);
   border-bottom-color: rgba(0, 153, 187, 0.18);
 }
 
 [data-theme="light"] .search-input {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%235a4a78' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.006a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%23666666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.006a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
 }
 
 [data-theme="light"] .btn-primary {
@@ -1140,7 +1140,7 @@ a:hover { text-decoration: underline; }
 
 [data-theme="light"] .tier-beginner     { background: rgba(0, 153, 187, 0.1);  color: #0077aa; }
 [data-theme="light"] .tier-intermediate { background: rgba(204, 0, 90, 0.1);   color: #aa0050; }
-[data-theme="light"] .tier-senior       { background: rgba(110, 0, 200, 0.1);  color: #6600bb; }
+[data-theme="light"] .tier-senior       { background: rgba(80, 80, 80, 0.12);  color: #444444; }
 
 [data-theme="light"] .lesson-box-beginner {
   background: rgba(0, 153, 187, 0.06);
@@ -1149,10 +1149,16 @@ a:hover { text-decoration: underline; }
 [data-theme="light"] .lesson-box-beginner h3 { color: #0077aa; }
 
 [data-theme="light"] .lesson-box-senior {
-  background: rgba(204, 0, 90, 0.05);
-  border-color: rgba(204, 0, 90, 0.18);
+  background: rgba(80, 80, 80, 0.06);
+  border-color: rgba(80, 80, 80, 0.18);
 }
-[data-theme="light"] .lesson-box-senior h3 { color: #cc005a; }
+[data-theme="light"] .lesson-box-senior h3 { color: #555555; }
+
+[data-theme="light"] .discord-banner {
+  background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 40%, #f5f5f5 100%);
+}
+
+[data-theme="light"] .discord-cta { color: #1a1a1a; }
 
 /* ═══════════════════════════════════════════════════
    ICON TOGGLES (theme / senior mode)
@@ -1612,13 +1618,13 @@ a:hover { text-decoration: underline; }
 .lesson-item.completed .lesson-check {
   background: linear-gradient(135deg, var(--accent), #00cfeb);
   border-color: var(--accent);
-  color: #0f0f23;
+  color: #1a1a1a;
 }
 
 /* Course number bubble */
 .course-num {
   background: linear-gradient(135deg, var(--accent), var(--pink));
-  color: #0f0f23;
+  color: #1a1a1a;
 }
 
 /* Glossary card title */
@@ -1664,7 +1670,7 @@ a:hover { text-decoration: underline; }
   border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #1e1240 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 40%, #2a2a2a 100%);
   border: 1px solid rgba(88, 101, 242, 0.45);
   box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.15), 0 8px 32px rgba(88, 101, 242, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -1726,7 +1732,7 @@ a:hover { text-decoration: underline; }
 .discord-cta {
   font-size: 1rem;
   font-weight: 700;
-  color: #f0e6ff;
+  color: #f0f0f0;
   line-height: 1.3;
 }
 
