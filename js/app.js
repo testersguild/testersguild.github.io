@@ -333,12 +333,21 @@
 
 
   // ── Persona & filters ─────────────────────────────────────────────────────
+  // Map persona → audience filter
+  const PERSONA_FILTER = {
+    beginner:   "beginner",
+    experienced: "intermediate",
+    senior:     "senior",
+  };
+
   function setPersona(p) {
     persona = p;
     localStorage.setItem(STORAGE_PERSONA, p);
     document.querySelectorAll(".persona-card").forEach((el) => {
       el.classList.toggle("active", el.dataset.persona === p);
     });
+    // sync home filter chip with persona
+    homeFilter = PERSONA_FILTER[p] || "all";
     showToast(t("toast.personaSaved"));
     if (currentView === "home") renderHome();
   }
@@ -1102,6 +1111,8 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────
   document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+  // sync homeFilter with saved persona on load
+  homeFilter = PERSONA_FILTER[persona] || "all";
   applyTheme();
   applySeniorMode();
   applyStaticI18n();
