@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Testers Guild QA Course — Formação QA do zero ao sênior.">
+  <title>Testers Guild QA Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='70'>⚔</text></svg>">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo" data-nav="home" aria-label="Testers Guild QA Course Home">
+        <div class="logo-icon">⚔</div>
+        <span class="logo-text"><span data-i18n="brand.name">Testers Guild</span> <span class="logo-suffix" data-i18n="brand.suffix">QA Course</span></span>
+      </a>
+      <div class="header-actions">
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#" data-nav="home" class="active" data-i18n="nav.home">Início</a>
+          <a href="#" data-nav="tracks" data-i18n="nav.tracks">Trilhas</a>
+          <a href="#" data-nav="roadmap" data-i18n="nav.roadmap">Rotas</a>
+          <a href="#" data-nav="glossary" data-i18n="nav.glossary">Glossário</a>
+          <a href="#" data-nav="labs" data-i18n="nav.labs">Labs</a>
+          <a href="#" data-nav="dashboard" data-i18n="nav.dashboard">Progresso</a>
+          <span class="badge-free" data-i18n="nav.allUnlocked">🔓 Tudo Liberado</span>
+        </nav>
+        <div class="header-toggles">
+          <button type="button" id="senior-mode-toggle" class="icon-toggle" title="Senior Mode">👑</button>
+          <button type="button" id="theme-toggle" class="icon-toggle" title="Theme">🌙</button>
+          <button type="button" id="lang-toggle" class="lang-toggle" aria-label="Switch language">
+          <span class="lang-flag">🇧🇷</span>
+          <span id="lang-label">ENG</span>
+        </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="main">
+    <section id="view-home" class="view active">
+      <div class="hero">
+        <div class="hero-badge">
+          <span class="badge-free" data-i18n="hero.badge">100% Gratuito · Do zero ao sênior</span>
+        </div>
+        <h1 data-i18n="hero.title">Bem-vindo à Testers Guild</h1>
+        <p data-i18n="hero.subtitle">Formação QA para iniciantes e seniors.</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-value" id="stat-tracks">—</div>
+            <div class="stat-label" data-i18n="hero.statTracks">Trilhas</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="stat-lessons">—</div>
+            <div class="stat-label" data-i18n="hero.statLessons">Aulas</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="stat-price">R$ 0</div>
+            <div class="stat-label" data-i18n="hero.statPrice">Para sempre</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discord Banner -->
+      <a href="https://discord.gg/evVQqq4rf" target="_blank" rel="noopener noreferrer" class="discord-banner" aria-label="Entrar na comunidade no Discord">
+        <div class="discord-banner-inner">
+          <span class="discord-icon">
+            <svg width="28" height="22" viewBox="0 0 127.14 96.36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+          </span>
+          <div class="discord-text">
+            <span class="discord-label">Comunidade oficial</span>
+            <span class="discord-cta">Entrar no Discord da Testers Guild →</span>
+          </div>
+          <span class="discord-pulse"></span>
+        </div>
+      </a>
+
+      <div class="persona-section">
+        <h2 class="persona-title" data-i18n="persona.title">Qual é o seu perfil?</h2>
+        <div class="persona-grid" id="persona-grid">
+          <button type="button" class="persona-card" data-persona="beginner">
+            <span class="persona-emoji">🌱</span>
+            <span class="persona-name" data-i18n="persona.beginner">Iniciante</span>
+            <span class="persona-desc" data-i18n="persona.beginnerDesc">Nunca trabalhei com QA</span>
+          </button>
+          <button type="button" class="persona-card" data-persona="experienced">
+            <span class="persona-emoji">⚡</span>
+            <span class="persona-name" data-i18n="persona.experienced">Intermediário</span>
+            <span class="persona-desc" data-i18n="persona.experiencedDesc">Já testo, quero evoluir</span>
+          </button>
+          <button type="button" class="persona-card" data-persona="senior">
+            <span class="persona-emoji">👑</span>
+            <span class="persona-name" data-i18n="persona.senior">Sênior</span>
+            <span class="persona-desc" data-i18n="persona.seniorDesc">Arquitetura e liderança</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="continue-banner" class="continue-banner hidden"></div>
+
+      <div class="search-bar-wrap">
+        <input type="search" id="global-search" class="search-input" data-i18n-placeholder="dashboard.searchPlaceholder" placeholder="Buscar…" autocomplete="off">
+        <div id="search-results" class="search-results hidden"></div>
+      </div>
+
+      <div class="cta-group" style="margin-bottom:2rem">
+        <button class="btn btn-primary" data-nav="tracks" data-i18n="hero.ctaExplore">Explorar Trilhas →</button>
+        <button class="btn btn-secondary" data-nav="roadmap" data-i18n="nav.roadmap">Ver Rotas</button>
+        <button class="btn btn-secondary" data-nav="glossary" data-i18n="nav.glossary">Glossário</button>
+      </div>
+
+      <h2 class="section-title" data-i18n="sections.availableTracks">Trilhas da Guilda</h2>
+      <p class="section-sub" data-i18n="sections.availableTracksSub">Filtradas pelo seu perfil.</p>
+      <div id="home-tracks-grid" class="tracks-grid"></div>
+
+      <section class="features">
+        <h2 class="section-title" data-i18n="sections.whyTitle">Por que a Testers Guild?</h2>
+        <p class="section-sub" data-i18n="sections.whySub">Iniciante e sênior na mesma plataforma.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🌱👑</div>
+            <h3 data-i18n="features.dual.title">Iniciante + Sênior</h3>
+            <p data-i18n="features.dual.desc">Dicas e notas Guild Master em cada aula.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔓</div>
+            <h3 data-i18n="features.unlocked.title">Tudo liberado</h3>
+            <p data-i18n="features.unlocked.desc">Sem paywall.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3 data-i18n="features.tracks.title">9 trilhas</h3>
+            <p data-i18n="features.tracks.desc">Do zero à maestria.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3 data-i18n="features.progress.title">Progresso local</h3>
+            <p data-i18n="features.progress.desc">Sem cadastro.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section id="view-tracks" class="view">
+      <h2 class="section-title" data-i18n="sections.allTracks">Todas as Trilhas</h2>
+      <p class="section-sub" data-i18n="sections.allTracksSub">Filtre por nível.</p>
+      <div class="filter-bar" id="track-filter-bar"></div>
+      <div id="tracks-grid" class="tracks-grid"></div>
+    </section>
+
+    <section id="view-roadmap" class="view">
+      <h2 class="section-title" data-i18n="sections.roadmapTitle">Rotas de Aprendizado</h2>
+      <p class="section-sub" data-i18n="sections.roadmapSub">Caminhos curados.</p>
+      <div id="roadmap-content"></div>
+    </section>
+
+    <section id="view-glossary" class="view">
+      <h2 class="section-title" data-i18n="sections.glossaryTitle">Glossário QA</h2>
+      <p class="section-sub" data-i18n="sections.glossarySub">Termos essenciais.</p>
+      <div id="glossary-content" class="glossary-grid"></div>
+    </section>
+
+    <section id="view-labs" class="view">
+      <h2 class="section-title" data-i18n="sections.labsTitle">Laboratórios de Prática</h2>
+      <p class="section-sub" data-i18n="sections.labsSub">Ambientes gratuitos.</p>
+      <div id="labs-content" class="labs-grid"></div>
+    </section>
+
+    <section id="view-quiz" class="view">
+      <div class="breadcrumb">
+        <a href="#" data-nav="tracks" data-i18n="breadcrumb.tracks">Trilhas</a>
+        <span aria-hidden="true">›</span>
+        <span id="quiz-breadcrumb">—</span>
+      </div>
+      <div id="quiz-content"></div>
+    </section>
+
+    <section id="view-track" class="view">
+      <div class="breadcrumb">
+        <a href="#" data-nav="tracks" data-i18n="breadcrumb.tracks">Trilhas</a>
+        <span aria-hidden="true">›</span>
+        <span id="track-breadcrumb">—</span>
+      </div>
+      <div id="track-detail"></div>
+    </section>
+
+    <section id="view-lesson" class="view">
+      <div class="breadcrumb">
+        <a href="#" data-nav="tracks" data-i18n="breadcrumb.tracks">Trilhas</a>
+        <span aria-hidden="true">›</span>
+        <a href="#" id="lesson-track-link">—</a>
+        <span aria-hidden="true">›</span>
+        <span id="lesson-breadcrumb">—</span>
+      </div>
+      <div id="lesson-detail"></div>
+    </section>
+
+    <section id="view-dashboard" class="view">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="section-title" data-i18n="sections.myProgress">Meu Progresso</h2>
+          <p class="section-sub" data-i18n="sections.myProgressSub">Suas aulas concluídas.</p>
+        </div>
+        <button type="button" id="btn-reset-progress" class="btn btn-secondary btn-sm" data-i18n="dashboard.resetProgress">Resetar</button>
+      </div>
+      <div id="dashboard-stats" class="dashboard-grid"></div>
+      <h3 class="section-title section-title-sm" data-i18n="sections.achievementsTitle">Conquistas</h3>
+      <p class="section-sub" data-i18n="sections.achievementsSub">Badges desbloqueados.</p>
+      <div id="achievements-grid" class="achievements-grid"></div>
+      <h3 class="section-title section-title-sm" style="margin-top:2rem" data-i18n="dashboard.bookmarksTitle">Aulas Favoritas</h3>
+      <div class="dashboard-bookmarks-wrap">
+        <div id="dashboard-bookmarks"></div>
+      </div>
+      <h3 class="section-title section-title-sm" style="margin-top:2rem">Trilhas</h3>
+      <div id="dashboard-tracks" class="tracks-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p><strong>Testers Guild</strong> — <span data-i18n="footer.line1">QA Course</span></p>
+    <p class="footer-sub" data-i18n="footer.line2">Plataforma independente.</p>
+    <p class="footer-discord">
+      <a href="https://discord.gg/evVQqq4rf" target="_blank" rel="noopener noreferrer">
+        💬 Comunidade no Discord
+      </a>
+    </p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data/tracks.js"></script>
+  <script src="data/translations-en.js"></script>
+  <script src="data/lesson-enrichment.js"></script>
+  <script src="data/glossary.js"></script>
+  <script src="data/quizzes.js"></script>
+  <script src="data/checklists.js"></script>
+  <script src="data/labs.js"></script>
+  <script src="data/achievements.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
