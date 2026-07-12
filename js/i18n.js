@@ -46,7 +46,7 @@ window.TG_I18N = {
     features: {
       unlocked: { title: "Tudo liberado", desc: "Nenhuma aula bloqueada. Sem assinatura, sem cartão." },
       dual: { title: "Iniciante + Sênior", desc: "Cada aula tem dicas para quem começa e notas Guild Master para experientes." },
-      tracks: { title: "9 trilhas originais", desc: "Fundamentos até maestria: web, API, mobile, performance, security, DevOps, a11y." },
+      tracks: { title: "8 trilhas originais", desc: "Fundamentos até maestria: web, API, performance, security, DevOps, a11y." },
       progress: { title: "Progresso local", desc: "Marque aulas concluídas — salvo no navegador, sem conta." },
     },
     track: {

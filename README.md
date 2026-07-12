@@ -9,17 +9,16 @@ Plataforma **100% gratuita** de formação em Qualidade de Software — pensada 
 | Perfil | O que usar |
 |--------|------------|
 | **Iniciante** | Selecione perfil 🌱 → Rota do Recruta → Glossário → aulas com "Comece por aqui" |
-| **Intermediário** | Trilhas técnicas (Web, API, Mobile, DevOps) |
+| **Intermediário** | Trilhas técnicas (Web, API, DevOps) |
 | **Sênior** | Rota do Mestre → Maestria da Guilda → notas "Guild Master" em cada aula |
 
-## Trilhas da Guilda (9)
+## Trilhas da Guilda (8)
 
 | Trilha | Público | Foco |
 |--------|---------|------|
 | Iniciação da Guilda | Iniciante | Fundamentos, BDD, Git, primeira automação |
 | Forja Frontend | Intermediário | Cypress, Playwright, Selenium |
 | Oficina de Integração | Intermediário | REST, Postman, contratos |
-| Laboratório Mobile | Intermediário | Appium, WebdriverIO |
 | Arena de Carga | Sênior | JMeter, K6, SLAs |
 | Sentinela de Segurança | Intermediário+ | OWASP, ZAP, SQLi/XSS |
 | Artesanato de Pipeline | Intermediário+ | CI/CD, Docker, Allure |
@@ -30,7 +29,7 @@ Plataforma **100% gratuita** de formação em Qualidade de Software — pensada 
 
 - **Perfil do aluno** — Iniciante / Intermediário / Sênior (reordena trilhas recomendadas)
 - **Rotas curadas** — Rota do Recruta e Rota do Mestre
-- **Glossário QA** — 18 termos explicados (PT/EN)
+- **Glossário QA** — 56 termos explicados (PT/EN)
 - **Dual content** — 🌱 dicas para iniciantes + 👑 notas Guild Master por aula
 - **Badges de nível** — Iniciante / Intermediário / Avançado em cada aula
 - **PT ↔ ENG** — botão no header
@@ -58,7 +57,7 @@ Testers-Guild-QA/
 │   ├── app.js
 │   └── i18n.js
 └── data/
-    ├── tracks.js              # 9 trilhas, 151 aulas
+    ├── tracks.js              # 8 trilhas, 132 aulas
     ├── translations-en.js     # Traduções EN
     ├── lesson-enrichment.js   # Tier + dicas iniciante/sênior
     └── glossary.js            # Glossário + rotas
