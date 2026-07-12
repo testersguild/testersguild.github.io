@@ -31,8 +31,8 @@
           <span class="badge-free" data-i18n="nav.allUnlocked">🔓 Tudo Liberado</span>
         </nav>
         <div class="header-toggles">
-          <button type="button" id="senior-mode-toggle" class="icon-toggle" title="Senior Mode">👑</button>
-          <button type="button" id="theme-toggle" class="icon-toggle" title="Theme">🌙</button>
+          <button type="button" id="senior-mode-toggle" class="icon-toggle" aria-label="Toggle senior mode" title="Senior Mode">👑</button>
+          <button type="button" id="theme-toggle" class="icon-toggle" aria-label="Toggle dark/light theme" title="Theme">🌙</button>
           <button type="button" id="lang-toggle" class="lang-toggle" aria-label="Switch language">
           <span class="lang-flag">🇧🇷</span>
           <span id="lang-label">ENG</span>
@@ -236,15 +236,16 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="data/tracks.js"></script>
-  <script src="data/translations-en.js"></script>
-  <script src="data/lesson-enrichment.js"></script>
-  <script src="data/glossary.js"></script>
-  <script src="data/quizzes.js"></script>
-  <script src="data/checklists.js"></script>
-  <script src="data/labs.js"></script>
-  <script src="data/achievements.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/app.js"></script>
+  <script src="data/tracks.js" defer></script>
+  <script src="data/translations-en.js" defer></script>
+  <script src="data/lesson-enrichment.js" defer></script>
+  <script src="data/glossary.js" defer></script>
+  <script src="data/quizzes.js" defer></script>
+  <script src="data/checklists.js" defer></script>
+  <script src="data/labs.js" defer></script>
+  <script src="data/achievements.js" defer></script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/i18n.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

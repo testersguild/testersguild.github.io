@@ -2,8 +2,6 @@
 
 Plataforma **100% gratuita** de formação em Qualidade de Software — pensada para **iniciantes** e com profundidade para **seniors**.
 
-📁 **Pasta:** `/home/kaiorampz/Desktop/Testers-Guild-QA/`
-
 ## Para quem é?
 
 | Perfil | O que usar |
@@ -38,13 +36,13 @@ Plataforma **100% gratuita** de formação em Qualidade de Software — pensada 
 ## Como abrir
 
 ```bash
-xdg-open /home/kaiorampz/Desktop/Testers-Guild-QA/index.html
+xdg-open index.html
 ```
 
 Ou:
 
 ```bash
-cd /home/kaiorampz/Desktop/Testers-Guild-QA && python3 -m http.server 8080
+python3 -m http.server 8080
 ```
 
 ## Estrutura

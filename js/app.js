@@ -127,7 +127,7 @@
   function toggleTheme() {
     theme = theme === "dark" ? "light" : "dark";
     applyTheme();
-    showToast(theme === "dark" ? "🌙 Tema escuro" : "☀️ Tema claro");
+    showToast(theme === "dark" ? t("settings.darkTitle") : t("settings.lightTitle"));
   }
 
   // ── Senior Mode ───────────────────────────────────────────────────────────
@@ -144,9 +144,7 @@
   function toggleSeniorMode() {
     seniorMode = !seniorMode;
     applySeniorMode();
-    showToast(seniorMode
-      ? (lang === "en" ? "👑 Senior Mode ON — beginner tips hidden" : "👑 Modo Sênior ativado — dicas iniciante ocultas")
-      : (lang === "en" ? "👑 Senior Mode OFF" : "👑 Modo Sênior desativado"));
+    showToast(seniorMode ? t("settings.seniorModeEnabled") : t("settings.seniorModeDisabled"));
     if (currentView === "lesson") renderLesson(viewParams.lessonId);
   }
 
@@ -182,6 +180,10 @@
 
 
   // ── Utilities ─────────────────────────────────────────────────────────────
+  function getCurrentLangKey() {
+    return lang === "en" ? "en" : "pt";
+  }
+
   function escapeHtml(str) {
     return String(str)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;")
@@ -529,7 +531,7 @@
     const roadmaps  = window.TG_ROADMAPS || {};
     const routes    = [{ key: "beginner", icon: "🌱" }, { key: "senior", icon: "👑" }];
     container.innerHTML = routes.map(({ key, icon }) => {
-      const data = roadmaps[key]?.[lang === "en" ? "en" : "pt"] || roadmaps[key]?.pt;
+      const data = roadmaps[key]?.[getCurrentLangKey()] || roadmaps[key]?.pt;
       if (!data) return "";
       const steps = data.steps.map((step, i) => `
         <div class="roadmap-step">
@@ -557,7 +559,7 @@
 
   // ── Glossary ──────────────────────────────────────────────────────────────
   function renderGlossary() {
-    const items = (window.TG_GLOSSARY?.[lang === "en" ? "en" : "pt"]) || [];
+    const items = (window.TG_GLOSSARY?.[getCurrentLangKey()]) || [];
     document.getElementById("glossary-content").innerHTML = items.map((item) => `
       <article class="glossary-card">
         <h3>${escapeHtml(item.term)}</h3>
@@ -570,7 +572,7 @@
   function renderLabs() {
     const container = document.getElementById("labs-content");
     if (!container) return;
-    const labs = labsData[lang === "en" ? "en" : "pt"] || labsData.pt || [];
+    const labs = labsData[getCurrentLangKey()] || labsData.pt || [];
     if (!labs.length) {
       container.innerHTML = `<p class="empty-state">${lang === "en" ? "No labs available." : "Nenhum lab disponível."}</p>`;
       return;
@@ -617,7 +619,7 @@
     const track = findTrack(trackId);
     if (!track) return;
 
-    const langKey  = lang === "en" ? "en" : "pt";
+    const langKey  = getCurrentLangKey();
     const quizData = quizzes[trackId]?.[langKey] || quizzes[trackId]?.pt;
     if (!quizData) {
       container.innerHTML = `<p class="empty-state">${lang === "en" ? "No quiz available for this track yet." : "Nenhum quiz disponível para esta trilha ainda."}</p>`;
@@ -729,7 +731,7 @@
 
   // ── Checklist ─────────────────────────────────────────────────────────────
   function renderChecklist(trackId, container) {
-    const langKey = lang === "en" ? "en" : "pt";
+    const langKey = getCurrentLangKey();
     const data    = checklists[trackId]?.[langKey] || checklists[trackId]?.pt;
     if (!data) return "";
 
@@ -860,7 +862,7 @@
     const done     = !!progress[rawLesson.id];
     const enr      = getEnrichment(rawLesson.id);
     const isBookmarked = bookmarks.includes(rawLesson.id);
-    const langKey  = lang === "en" ? "en" : "pt";
+    const langKey  = getCurrentLangKey();
     const isProjectLesson = rawLesson.id.includes("-l") && course.title.toLowerCase().includes("project" || "projeto");
     saveLastLesson(lessonId);
 
@@ -1019,7 +1021,7 @@
       l.courseTitle.toLowerCase().includes(q)
     );
 
-    const glossaryItems = (window.TG_GLOSSARY?.[lang === "en" ? "en" : "pt"]) || [];
+    const glossaryItems = (window.TG_GLOSSARY?.[getCurrentLangKey()]) || [];
     const glossaryMatches = glossaryItems.filter((g) =>
       g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q)
     );
