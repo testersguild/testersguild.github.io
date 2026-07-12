@@ -95,7 +95,10 @@ window.TG_LESSON_ENRICHMENT = {
       "pt": "Um caso de teste mal escrito é um caso de teste inútil. O teste do título é: outro QA consegue executar seu caso sem te perguntar nada? Se não, ele está incompleto.",
       "en": "A poorly written test case is a useless one. The title test: can another QA execute your case without asking you anything? If not, it's incomplete."
     },
-    "seniorNote": null
+    "seniorNote": {
+      "pt": "Documentação de testes como sênior é sobre equilíbrio: documentar o suficiente para rastreabilidade e compliance, mas não tanto que vira overhead. Em times ágeis, considere Behavior-Driven Development (BDD) como documentação viva — specs em Gherkin servem como casos de teste e documentação simultaneamente. Para compliance (ISO, FDA), RTM é obrigatório; para startups, checklists e áudio em vídeos de bug podem ser suficientes.",
+      "en": "Test documentation as a senior is about balance: document enough for traceability and compliance, but not so much it becomes overhead. In agile teams, consider Behavior-Driven Development (BDD) as living documentation — Gherkin specs serve as test cases and documentation simultaneously. For compliance (ISO, FDA), RTM is mandatory; for startups, checklists and audio in bug videos may be sufficient."
+    }
   },
   "s4-l2": {
     "tier": "beginner",
@@ -103,7 +106,10 @@ window.TG_LESSON_ENRICHMENT = {
       "pt": "Pratique agora: escreva um bug report para qualquer problema que você viu hoje (num site, app, qualquer coisa). Use a estrutura da aula. Mostre para alguém — eles conseguiram reproduzir?",
       "en": "Practice now: write a bug report for any problem you saw today (on a site, app, anything). Use the lesson structure. Show it to someone — could they reproduce it?"
     },
-    "seniorNote": null
+    "seniorNote": {
+      "pt": "Bug reports como sênior são sobre influência e priorização. Um bug bem documentado com impacto de negócio claro é corrigido mais rápido. Inclua contexto: 'Isso afeta 20% dos usuários mobile' ou 'Bloqueia campanha de Black Friday'. Como sênior, você triage bugs como Product Manager — não só registra, mas influencia roadmap de correções.",
+      "en": "Bug reports as a senior are about influence and prioritization. A well-documented bug with clear business impact gets fixed faster. Include context: 'This affects 20% of mobile users' or 'Blocks Black Friday campaign'. As a senior, you triage bugs like a Product Manager — not just recording, but influencing fix roadmap."
+    }
   },
   "s4-l3": {
     "tier": "beginner",
