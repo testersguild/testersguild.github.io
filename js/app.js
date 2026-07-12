@@ -48,16 +48,11 @@
   };
 
   // ── Storage helpers ───────────────────────────────────────────────────────
-  /**
-   * Gets value from localStorage with legacy key fallback
-   * @param {string} key - Primary storage key
-   * @param {string} legacyKey - Fallback legacy key
-   * @returns {string|null} Stored value or null
-   */
   function getStorage(key, legacyKey) {
     let val = localStorage.getItem(key);
     if (!val && legacyKey) {
       val = localStorage.getItem(legacyKey);
+      if (val) localStorage.setItem(key, val);
     }
     return val;
   }
@@ -76,15 +71,9 @@
   }
 
   function saveProgress() { localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress)); }
-
   function saveLastLesson(id) { localStorage.setItem(STORAGE_LAST_LESSON, id); }
 
   // ── i18n ──────────────────────────────────────────────────────────────────
-  /**
-   * Translates a key using current language
-   * @param {string} key - Translation key (dot notation)
-   * @returns {string} Translated string or key if not found
-   */
   function t(key) {
     const parts = key.split(".");
     let node = window.TG_I18N?.[lang];
@@ -95,11 +84,6 @@
     return node;
   }
 
-  /**
-   * Returns localized track data
-   * @param {Object} track - Track data object
-   * @returns {Object} Localized track data
-   */
   function localizedTrack(track) {
     if (lang === "en" && enOverlay.tracks[track.id]) {
       const o = enOverlay.tracks[track.id];
@@ -108,22 +92,12 @@
     return track;
   }
 
-  /**
-   * Returns localized course data
-   * @param {Object} course - Course data object
-   * @returns {Object} Localized course data
-   */
   function localizedCourse(course) {
     if (lang === "en" && enOverlay.courses[course.id])
       return { ...course, title: enOverlay.courses[course.id].title };
     return course;
   }
 
-  /**
-   * Returns localized lesson data
-   * @param {Object} lesson - Lesson data object
-   * @returns {Object} Localized lesson data
-   */
   function localizedLesson(lesson) {
     if (lang === "en" && enOverlay.lessons[lesson.id]) {
       const o = enOverlay.lessons[lesson.id];
@@ -132,20 +106,10 @@
     return lesson;
   }
 
-  /**
-   * Gets enrichment data for a lesson
-   * @param {string} lessonId - Lesson identifier
-   * @returns {Object} Enrichment data with tier, primer, and senior note
-   */
   function getEnrichment(lessonId) {
     return enrichment[lessonId] || { tier: "intermediate", primer: null, seniorNote: null };
   }
 
-  /**
-   * Returns localized label for lesson tier
-   * @param {string} tier - Tier level (beginner, intermediate, senior)
-   * @returns {string} Localized tier label
-   */
   function tierLabel(tier) {
     const map = { beginner: "lesson.tierBeginner", intermediate: "lesson.tierIntermediate", senior: "lesson.tierSenior" };
     return t(map[tier] || "lesson.tierIntermediate");
@@ -153,9 +117,6 @@
 
 
   // ── Theme ─────────────────────────────────────────────────────────────────
-  /**
-   * Applies current theme to document
-   */
   function applyTheme() {
     document.documentElement.setAttribute("data-theme", theme);
     const btn = document.getElementById("theme-toggle");
@@ -163,48 +124,35 @@
     localStorage.setItem(STORAGE_THEME, theme);
   }
 
-  /**
-   * Toggles between dark and light theme
-   */
   function toggleTheme() {
     theme = theme === "dark" ? "light" : "dark";
     applyTheme();
-    showToast(theme === "dark" ? t("settings.darkTitle") : t("settings.lightTitle"));
+    showToast(theme === "dark" ? "🌙 Tema escuro" : "☀️ Tema claro");
   }
 
   // ── Senior Mode ───────────────────────────────────────────────────────────
-  /**
-   * Applies senior mode state to document
-   */
   function applySeniorMode() {
     document.documentElement.classList.toggle("senior-mode", seniorMode);
     const btn = document.getElementById("senior-mode-toggle");
     if (btn) {
       btn.classList.toggle("active-toggle", seniorMode);
-      btn.setAttribute("aria-pressed", String(seniorMode));
-      btn.title = seniorMode ? t("settings.seniorModeOn") : t("settings.seniorModeOff");
+      btn.title = seniorMode ? (lang === "en" ? "Senior Mode ON" : "Modo Sênior ATIVO") : (lang === "en" ? "Senior Mode" : "Modo Sênior");
     }
     localStorage.setItem(STORAGE_SENIOR_MODE, String(seniorMode));
   }
 
-  /**
-   * Toggles senior mode on/off
-   */
   function toggleSeniorMode() {
     seniorMode = !seniorMode;
     applySeniorMode();
-    showToast(seniorMode ? t("settings.seniorModeEnabled") : t("settings.seniorModeDisabled"));
+    showToast(seniorMode
+      ? (lang === "en" ? "👑 Senior Mode ON — beginner tips hidden" : "👑 Modo Sênior ativado — dicas iniciante ocultas")
+      : (lang === "en" ? "👑 Senior Mode OFF" : "👑 Modo Sênior desativado"));
     if (currentView === "lesson") renderLesson(viewParams.lessonId);
   }
 
   // ── Language ──────────────────────────────────────────────────────────────
-  /**
-   * Sets application language
-   * @param {string} newLang - Language code ("en" or "pt")
-   */
   function setLang(newLang) {
     lang = newLang === "en" ? "en" : "pt";
-    window.lang = lang; // Keep global lang in sync
     localStorage.setItem(STORAGE_LANG, lang);
     document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
     document.title = t("meta.title");
@@ -215,9 +163,6 @@
     showToast(t("toast.langChanged"));
   }
 
-  /**
-   * Toggles between Portuguese and English
-   */
   function toggleLang() { setLang(lang === "pt" ? "en" : "pt"); }
 
   function applyStaticI18n() {
@@ -232,12 +177,16 @@
     const label = document.getElementById("lang-label");
     const flag  = btn?.querySelector(".lang-flag");
     if (label) label.textContent = t("lang.toggle");
-    if (flag) flag.textContent = getCurrentLangKey() === "pt" ? "🇧🇷" : "🇺🇸";
+    if (flag) flag.textContent = lang === "pt" ? "🇧🇷" : "🇺🇸";
   }
 
 
   // ── Utilities ─────────────────────────────────────────────────────────────
-  // getCurrentLangKey and escapeHtml are now in utils.js and shared across the app
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
 
   function showToast(msg) {
     const el = document.getElementById("toast");
@@ -275,58 +224,26 @@
 
   // ── Progress helpers ──────────────────────────────────────────────────────
   function countLessons(track) {
-    if (!track || !track.courses || !Array.isArray(track.courses)) return 0;
-    return track.courses.reduce((s, c) => s + (c.lessons ? c.lessons.length : 0), 0);
+    return track.courses.reduce((s, c) => s + c.lessons.length, 0);
   }
 
   function getTrackProgress(track) {
-    if (!track || !track.courses || !Array.isArray(track.courses)) {
-      return { done: 0, total: 0, pct: 0 };
-    }
-    
     const total = countLessons(track);
-    const done  = track.courses.reduce((s, c) => {
-      if (!c.lessons || !Array.isArray(c.lessons)) return s;
-      return s + c.lessons.filter((l) => progress[l.id]).length;
-    }, 0);
+    const done  = track.courses.reduce((s, c) => s + c.lessons.filter((l) => progress[l.id]).length, 0);
     return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
   }
 
   function getGlobalProgress() {
-    try {
-      const tracksData = tracks;
-      if (!tracksData || !Array.isArray(tracksData) || tracksData.length === 0) {
-        return { done: 0, total: 0, pct: 0 };
-      }
-      
-      const all  = tracksData.flatMap((tr) => {
-        if (!tr.courses || !Array.isArray(tr.courses)) return [];
-        return tr.courses.flatMap((c) => {
-          if (!c.lessons || !Array.isArray(c.lessons)) return [];
-          return c.lessons;
-        });
-      });
-      const done = all.filter((l) => progress[l.id]).length;
-      const result = { done, total: all.length, pct: all.length ? Math.round((done / all.length) * 100) : 0 };
-      return result;
-    } catch (error) {
-      console.error('Error calculating global progress:', error);
-      return { done: 0, total: 0, pct: 0 };
-    }
+    const all  = tracks.flatMap((tr) => tr.courses.flatMap((c) => c.lessons));
+    const done = all.filter((l) => progress[l.id]).length;
+    return { done, total: all.length, pct: all.length ? Math.round((done / all.length) * 100) : 0 };
   }
 
   function getAllLessons() {
-    const tracksData = tracks;
-    if (!tracksData || !Array.isArray(tracksData)) return [];
-    
     const lessons = [];
-    tracksData.forEach((track) => {
-      if (!track.courses || !Array.isArray(track.courses)) return;
-      
+    tracks.forEach((track) => {
       const lt = localizedTrack(track);
       track.courses.forEach((course) => {
-        if (!course.lessons || !Array.isArray(course.lessons)) return;
-        
         const lc = localizedCourse(course);
         course.lessons.forEach((lesson) => {
           lessons.push({ ...localizedLesson(lesson), trackId: track.id, trackTitle: lt.title, courseTitle: lc.title });
@@ -336,47 +253,11 @@
     return lessons;
   }
 
-  /**
-   * Hides Discord banner and saves user preference
-   */
-  function hideDiscordBanner() {
-    const banner = document.getElementById("discord-banner");
-    if (banner) {
-      banner.classList.add("hidden");
-      localStorage.setItem(STORAGE_DISCORD_BANNER, "hidden");
-    }
-  }
-
-  /**
-   * Shows Discord banner if not hidden by user
-   */
-  function initDiscordBanner() {
-    const banner = document.getElementById("discord-banner");
-    if (banner) {
-      const isHidden = localStorage.getItem(STORAGE_DISCORD_BANNER) === "hidden";
-      if (isHidden) {
-        banner.classList.add("hidden");
-      }
-      banner.querySelector(".discord-close").addEventListener("click", hideDiscordBanner);
-    }
-  }
-
-  function findTrack(id) { 
-    const tracksData = tracks;
-    if (!tracksData || !Array.isArray(tracksData)) return null;
-    return tracksData.find((tr) => tr.id === id); 
-  }
+  function findTrack(id) { return tracks.find((tr) => tr.id === id); }
 
   function findLesson(lessonId) {
-    const tracksData = tracks;
-    if (!tracksData || !Array.isArray(tracksData)) return null;
-    
-    for (const track of tracksData) {
-      if (!track.courses || !Array.isArray(track.courses)) continue;
-      
+    for (const track of tracks) {
       for (const course of track.courses) {
-        if (!course.lessons || !Array.isArray(course.lessons)) continue;
-        
         const lesson = course.lessons.find((l) => l.id === lessonId);
         if (lesson) {
           return {
@@ -445,7 +326,7 @@
       return `<div class="achievement-card ${isUnlocked ? "unlocked" : "locked"}" title="${isUnlocked ? data.desc : "?"}">
         <div class="ach-icon">${isUnlocked ? ach.icon : "🔒"}</div>
         <div class="ach-title">${isUnlocked ? escapeHtml(data.title) : "???"}</div>
-        <div class="ach-desc">${isUnlocked ? escapeHtml(data.desc) : t("achievements.lockedMessage")}</div>
+        <div class="ach-desc">${isUnlocked ? escapeHtml(data.desc) : (lang === "en" ? "Keep learning to unlock" : "Continue estudando para desbloquear")}</div>
       </div>`;
     }).join("");
   }
@@ -475,9 +356,12 @@
     return (PERSONA_TRACKS[persona] || []).includes(trackId);
   }
 
+  function filterTracks(list) {
+    if (trackFilter === "all") return list;
+    return list.filter((tr) => TRACK_AUDIENCE[tr.id] === trackFilter);
+  }
+
   function sortTracksForPersona(list) {
-    if (!list || !Array.isArray(list)) return [];
-    
     const order = PERSONA_TRACKS[persona] || [];
     return [...list].sort((a, b) => {
       const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
@@ -518,14 +402,12 @@
 
   // ── Track card ────────────────────────────────────────────────────────────
   function renderTrackCard(track, containerId, opts = {}) {
-    if (!track) return;
-    
     const lt   = localizedTrack(track);
     const prog = getTrackProgress(track);
     const container = document.getElementById(containerId);
     if (!container) return;
     const rec      = opts.showRecommend && isRecommended(track.id);
-    const audience = TRACK_AUDIENCE[track.id] || "intermediate"; // Default to intermediate if not found
+    const audience = TRACK_AUDIENCE[track.id] || "intermediate";
     const isComplete = prog.pct === 100;
 
     const card = document.createElement("article");
@@ -537,7 +419,7 @@
       <div class="track-card-header">
         <span class="track-icon">${track.icon}</span>
         <div class="track-badges">
-          ${isComplete ? `<span class="badge-complete">✅ ${t("dashboard.complete")}</span>` : ""}
+          ${isComplete ? `<span class="badge-complete">✅ ${lang === "en" ? "Complete" : "Completo"}</span>` : ""}
           ${rec && !isComplete ? `<span class="badge-rec">${t("track.recommended")}</span>` : ""}
           <span class="tier-badge tier-${audience}">${tierLabel(audience)}</span>
         </div>
@@ -599,37 +481,19 @@
 
   function renderHome() {
     const global = getGlobalProgress();
-    
-    // Update stats with actual values, showing loading text if data not ready
-    const tracksData = tracks;
-    const tracksCount = tracksData.length;
-    const lessonsCount = global.total;
-    const loadingText = t("hero.loading");
-    
-    document.getElementById("stat-tracks").textContent = tracksCount > 0 ? tracksCount : loadingText;
-    document.getElementById("stat-lessons").textContent = lessonsCount > 0 ? lessonsCount : loadingText;
-    
+    document.getElementById("stat-lessons").textContent = global.total;
+    document.getElementById("stat-tracks").textContent  = tracks.length;
     document.querySelectorAll(".persona-card").forEach((el) => el.classList.toggle("active", el.dataset.persona === persona));
 
     renderHomeFilterBar();
 
-    let filtered;
-    if (homeFilter === "all") {
-      filtered = sortTracksForPersona(tracksData);
-    } else {
-      filtered = tracksData.filter((tr) => {
-        const audience = TRACK_AUDIENCE[tr.id] || "intermediate"; // Default to intermediate if not found
-        return audience === homeFilter;
-      });
-    }
+    const filtered = homeFilter === "all"
+      ? sortTracksForPersona(tracks)
+      : tracks.filter((tr) => TRACK_AUDIENCE[tr.id] === homeFilter);
 
     const grid = document.getElementById("home-tracks-grid");
-    if (grid) {
-      grid.innerHTML = "";
-      if (filtered && filtered.length > 0) {
-        filtered.forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
-      }
-    }
+    grid.innerHTML = "";
+    filtered.forEach((tr) => renderTrackCard(tr, "home-tracks-grid", { showRecommend: true }));
     renderContinueBanner();
   }
 
@@ -652,22 +516,11 @@
   function renderTracksPage() {
     renderFilterBar();
     const grid = document.getElementById("tracks-grid");
-    if (grid) {
-      grid.innerHTML = "";
-      const tracksData = tracks;
-      let filtered;
-      if (trackFilter === "all") {
-        filtered = sortTracksForPersona(tracksData);
-      } else {
-        filtered = tracksData.filter((tr) => {
-          const audience = TRACK_AUDIENCE[tr.id] || "intermediate"; // Default to intermediate if not found
-          return audience === trackFilter;
-        });
-      }
-      if (filtered && filtered.length > 0) {
-        filtered.forEach((tr) => renderTrackCard(tr, "tracks-grid", { showRecommend: true }));
-      }
-    }
+    grid.innerHTML = "";
+    const filtered = trackFilter === "all"
+      ? sortTracksForPersona(tracks)
+      : tracks.filter((tr) => TRACK_AUDIENCE[tr.id] === trackFilter);
+    filtered.forEach((tr) => renderTrackCard(tr, "tracks-grid", { showRecommend: true }));
   }
 
   // ── Roadmap ───────────────────────────────────────────────────────────────
@@ -676,7 +529,7 @@
     const roadmaps  = window.TG_ROADMAPS || {};
     const routes    = [{ key: "beginner", icon: "🌱" }, { key: "senior", icon: "👑" }];
     container.innerHTML = routes.map(({ key, icon }) => {
-      const data = roadmaps[key]?.[getCurrentLangKey()] || roadmaps[key]?.pt;
+      const data = roadmaps[key]?.[lang === "en" ? "en" : "pt"] || roadmaps[key]?.pt;
       if (!data) return "";
       const steps = data.steps.map((step, i) => `
         <div class="roadmap-step">
@@ -704,7 +557,7 @@
 
   // ── Glossary ──────────────────────────────────────────────────────────────
   function renderGlossary() {
-    const items = (window.TG_GLOSSARY?.[getCurrentLangKey()]) || [];
+    const items = (window.TG_GLOSSARY?.[lang === "en" ? "en" : "pt"]) || [];
     document.getElementById("glossary-content").innerHTML = items.map((item) => `
       <article class="glossary-card">
         <h3>${escapeHtml(item.term)}</h3>
@@ -717,9 +570,9 @@
   function renderLabs() {
     const container = document.getElementById("labs-content");
     if (!container) return;
-    const labs = labsData[getCurrentLangKey()] || labsData.pt || [];
+    const labs = labsData[lang === "en" ? "en" : "pt"] || labsData.pt || [];
     if (!labs.length) {
-      container.innerHTML = `<p class="empty-state">${t("labs.noLabs")}</p>`;
+      container.innerHTML = `<p class="empty-state">${lang === "en" ? "No labs available." : "Nenhum lab disponível."}</p>`;
       return;
     }
 
@@ -750,113 +603,13 @@
         <h3><a href="${escapeHtml(lab.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(lab.name)}</a></h3>
         <p>${escapeHtml(lab.desc)}</p>
         <a href="${escapeHtml(lab.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm lab-open-btn">
-          ${t("labs.openLab")}
+          ${lang === "en" ? "Open lab ↗" : "Abrir lab ↗"}
         </a>
       </article>`).join("")}</div>`;
   }
 
 
   // ── Quiz ──────────────────────────────────────────────────────────────────
-  
-  /**
-   * Renders quiz questions HTML
-   * @param {Array} questions - Array of quiz questions
-   * @returns {string} HTML string for quiz questions
-   */
-  function renderQuizQuestions(questions) {
-    return questions.map((q, qi) => `
-      <div class="quiz-question" data-qi="${qi}">
-        <p class="quiz-q-text"><strong>${qi + 1}.</strong> ${escapeHtml(q.q)}</p>
-        <div class="quiz-options">
-          ${q.options.map((opt, oi) => `
-            <label class="quiz-option" data-qi="${qi}" data-oi="${oi}">
-              <input type="radio" name="q${qi}" value="${oi}" class="quiz-radio">
-              <span class="quiz-option-text">${escapeHtml(opt)}</span>
-            </label>`).join("")}
-        </div>
-        <div class="quiz-explain hidden" id="explain-${qi}"></div>
-      </div>`).join("");
-  }
-
-  /**
-   * Handles quiz submission and result display
-   * @param {Object} quizData - Quiz data object
-   * @param {string} trackId - Track identifier
-   * @param {HTMLElement} container - Quiz container element
-   */
-  function handleQuizSubmit(quizData, trackId, container) {
-    let correct = 0;
-    quizData.questions.forEach((q, qi) => {
-      const selected = quizState.answers[qi];
-      const explainEl = document.getElementById(`explain-${qi}`);
-      const qBlock    = container.querySelector(`.quiz-question[data-qi="${qi}"]`);
-
-      // Highlight options
-      qBlock.querySelectorAll(".quiz-option").forEach((lbl) => {
-        const oi = parseInt(lbl.dataset.oi);
-        lbl.classList.add(oi === q.correct ? "correct" : "wrong-opt");
-        if (oi === selected) lbl.classList.add("selected-opt");
-      });
-      qBlock.querySelectorAll("input[type=radio]").forEach((r) => r.disabled = true);
-
-      if (selected === q.correct) correct++;
-      if (explainEl && q.explain) {
-        explainEl.textContent = q.explain;
-        explainEl.classList.remove("hidden");
-      }
-    });
-
-    const passed = correct >= quizData.passScore;
-    if (passed && !quizzesPassed[trackId]) {
-      quizzesPassed[trackId] = { passedAt: new Date().toISOString(), score: correct };
-      saveJson(STORAGE_QUIZZES, quizzesPassed);
-      checkAchievements();
-      showToast(t("toast.quizPassed"));
-    }
-
-    const resultEl = document.getElementById("quiz-result");
-    resultEl.className = `quiz-result ${passed ? "quiz-passed" : "quiz-failed"}`;
-    resultEl.innerHTML = `
-      <div class="quiz-result-icon">${passed ? "🎯" : "📚"}</div>
-      <div class="quiz-result-title">${passed ? t("quiz.passed") : t("quiz.failed")}</div>
-      <div class="quiz-result-score">${t("quiz.score")}: ${correct}/${quizData.questions.length}</div>
-      ${!passed ? `<button class="btn btn-primary btn-sm" id="btn-quiz-retry">${t("quiz.tryAgain")}</button>` : ""}`;
-    resultEl.classList.remove("hidden");
-
-    if (!passed) {
-      document.getElementById("btn-quiz-retry")?.addEventListener("click", () => renderQuiz(trackId));
-    }
-  }
-
-  /**
-   * Sets up quiz event listeners
-   * @param {string} trackId - Track identifier
-   * @param {Object} quizData - Quiz data object
-   * @param {HTMLElement} container - Quiz container element
-   */
-  function setupQuizEventListeners(trackId, quizData, container) {
-    document.getElementById("btn-quiz-back").addEventListener("click", () => navigate("track", { trackId }));
-
-    document.getElementById("quiz-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (quizState.submitted) return;
-      quizState.submitted = true;
-      handleQuizSubmit(quizData, trackId, container);
-    });
-
-    // Capture radio changes
-    container.querySelectorAll(".quiz-radio").forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const qi = parseInt(radio.closest(".quiz-option").dataset.qi);
-        quizState.answers[qi] = parseInt(radio.value);
-      });
-    });
-  }
-
-  /**
-   * Renders quiz interface for a track
-   * @param {string} trackId - Track identifier
-   */
   function renderQuiz(trackId) {
     const container = document.getElementById("quiz-content");
     if (!container) return;
@@ -864,10 +617,10 @@
     const track = findTrack(trackId);
     if (!track) return;
 
-    const langKey  = getCurrentLangKey();
+    const langKey  = lang === "en" ? "en" : "pt";
     const quizData = quizzes[trackId]?.[langKey] || quizzes[trackId]?.pt;
     if (!quizData) {
-      container.innerHTML = `<p class="empty-state">${t("quiz.noQuiz")}</p>`;
+      container.innerHTML = `<p class="empty-state">${lang === "en" ? "No quiz available for this track yet." : "Nenhum quiz disponível para esta trilha ainda."}</p>`;
       return;
     }
 
@@ -881,7 +634,18 @@
     // Reset quiz state for this track
     quizState = { trackId, answers: {}, submitted: false };
 
-    const questionsHtml = renderQuizQuestions(quizData.questions);
+    const questionsHtml = quizData.questions.map((q, qi) => `
+      <div class="quiz-question" data-qi="${qi}">
+        <p class="quiz-q-text"><strong>${qi + 1}.</strong> ${escapeHtml(q.q)}</p>
+        <div class="quiz-options">
+          ${q.options.map((opt, oi) => `
+            <label class="quiz-option" data-qi="${qi}" data-oi="${oi}">
+              <input type="radio" name="q${qi}" value="${oi}" class="quiz-radio">
+              <span class="quiz-option-text">${escapeHtml(opt)}</span>
+            </label>`).join("")}
+        </div>
+        <div class="quiz-explain hidden" id="explain-${qi}"></div>
+      </div>`).join("");
 
     container.innerHTML = `
       <div class="quiz-card">
@@ -889,10 +653,10 @@
           <span class="track-icon">${track.icon}</span>
           <div>
             <h2>${escapeHtml(quizData.title)}</h2>
-            <p class="quiz-meta">${quizData.questions.length} ${t("quiz.questions")} · ${t("quiz.pass")}: ${quizData.passScore}/${quizData.questions.length}</p>
+            <p class="quiz-meta">${quizData.questions.length} ${lang === "en" ? "questions" : "perguntas"} · ${lang === "en" ? "Pass" : "Aprovação"}: ${quizData.passScore}/${quizData.questions.length}</p>
           </div>
         </div>
-        ${alreadyPassed ? `<div class="quiz-passed-banner">🎯 ${t("quiz.alreadyPassed")}</div>` : ""}
+        ${alreadyPassed ? `<div class="quiz-passed-banner">🎯 ${lang === "en" ? "You already passed this quiz!" : "Você já passou neste quiz!"}</div>` : ""}
         <form id="quiz-form" class="quiz-form">
           ${questionsHtml}
           <div class="quiz-actions">
@@ -903,13 +667,69 @@
         <div id="quiz-result" class="quiz-result hidden"></div>
       </div>`;
 
-    setupQuizEventListeners(trackId, quizData, container);
+    document.getElementById("btn-quiz-back").addEventListener("click", () => navigate("track", { trackId }));
+
+    document.getElementById("quiz-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (quizState.submitted) return;
+      quizState.submitted = true;
+
+      let correct = 0;
+      quizData.questions.forEach((q, qi) => {
+        const selected = quizState.answers[qi];
+        const explainEl = document.getElementById(`explain-${qi}`);
+        const qBlock    = container.querySelector(`.quiz-question[data-qi="${qi}"]`);
+
+        // Highlight options
+        qBlock.querySelectorAll(".quiz-option").forEach((lbl) => {
+          const oi = parseInt(lbl.dataset.oi);
+          lbl.classList.add(oi === q.correct ? "correct" : "wrong-opt");
+          if (oi === selected) lbl.classList.add("selected-opt");
+        });
+        qBlock.querySelectorAll("input[type=radio]").forEach((r) => r.disabled = true);
+
+        if (selected === q.correct) correct++;
+        if (explainEl && q.explain) {
+          explainEl.textContent = q.explain;
+          explainEl.classList.remove("hidden");
+        }
+      });
+
+      const passed = correct >= quizData.passScore;
+      if (passed && !quizzesPassed[trackId]) {
+        quizzesPassed[trackId] = { passedAt: new Date().toISOString(), score: correct };
+        saveJson(STORAGE_QUIZZES, quizzesPassed);
+        checkAchievements();
+        showToast(t("toast.quizPassed"));
+      }
+
+      const resultEl = document.getElementById("quiz-result");
+      resultEl.className = `quiz-result ${passed ? "quiz-passed" : "quiz-failed"}`;
+      resultEl.innerHTML = `
+        <div class="quiz-result-icon">${passed ? "🎯" : "📚"}</div>
+        <div class="quiz-result-title">${passed ? t("quiz.passed") : t("quiz.failed")}</div>
+        <div class="quiz-result-score">${t("quiz.score")}: ${correct}/${quizData.questions.length}</div>
+        ${!passed ? `<button class="btn btn-primary btn-sm" id="btn-quiz-retry">${lang === "en" ? "Try Again" : "Tentar Novamente"}</button>` : ""}`;
+      resultEl.classList.remove("hidden");
+
+      if (!passed) {
+        document.getElementById("btn-quiz-retry")?.addEventListener("click", () => renderQuiz(trackId));
+      }
+    });
+
+    // Capture radio changes
+    container.querySelectorAll(".quiz-radio").forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const qi = parseInt(radio.closest(".quiz-option").dataset.qi);
+        quizState.answers[qi] = parseInt(radio.value);
+      });
+    });
   }
 
 
   // ── Checklist ─────────────────────────────────────────────────────────────
   function renderChecklist(trackId, container) {
-    const langKey = getCurrentLangKey();
+    const langKey = lang === "en" ? "en" : "pt";
     const data    = checklists[trackId]?.[langKey] || checklists[trackId]?.pt;
     if (!data) return "";
 
@@ -930,7 +750,7 @@
         <span class="checklist-progress" id="ck-progress-${trackId}">${savedItems.length}/${data.items.length} ${t("checklist.progress")}</span>
       </div>
       <div class="checklist-items">${itemsHtml}</div>
-      ${allDone ? `<div class="checklist-complete">🎉 ${t("checklist.complete")}</div>` : ""}
+      ${allDone ? `<div class="checklist-complete">🎉 ${lang === "en" ? "Project complete! Great work." : "Projeto concluído! Parabéns."}</div>` : ""}
     </div>`;
 
     if (container) {
@@ -947,7 +767,7 @@
           cb.closest(".checklist-item").classList.toggle("checked", cb.checked);
           if (checklistState[trackId].length >= data.items.length) {
             checkAchievements();
-            showToast(t("checklist.toastComplete"));
+            showToast(lang === "en" ? "✅ Project checklist complete!" : "✅ Checklist do projeto completo!");
           }
         });
       });
@@ -968,6 +788,7 @@
     let coursesHtml = "";
     raw.courses.forEach((rawCourse, idx) => {
       const course      = localizedCourse(rawCourse);
+      const isLastCourse = idx === raw.courses.length - 1;
       const lessonsHtml  = rawCourse.lessons.map((rawLesson) => {
         const lesson = localizedLesson(rawLesson);
         const enr    = getEnrichment(rawLesson.id);
@@ -995,7 +816,7 @@
         <div class="track-meta">
           <span>📦 ${raw.modules} ${t("track.modules")}</span>
           <span>⏱ ~${raw.hours} ${t("track.hoursLong")}</span>
-          <span class="tier-badge tier-${TRACK_AUDIENCE[raw.id] || 'intermediate'}">${tierLabel(TRACK_AUDIENCE[raw.id] || 'intermediate')}</span>
+          <span class="tier-badge tier-${TRACK_AUDIENCE[raw.id]}">${tierLabel(TRACK_AUDIENCE[raw.id])}</span>
         </div>
         <div class="progress-bar" style="margin-top:1rem;max-width:400px">
           <div class="progress-fill" style="width:${prog.pct}%;background:${raw.color}"></div>
@@ -1032,42 +853,21 @@
   }
 
   // ── Lesson ────────────────────────────────────────────────────────────────
-  
-  /**
-   * Renders lesson sidebar HTML
-   * @param {Object} track - Track data
-   * @param {Object} course - Course data
-   * @param {Object} rawCourse - Raw course data
-   * @param {Object} rawLesson - Raw lesson data
-   * @returns {string} HTML string for sidebar
-   */
-  function renderLessonSidebar(track, course, rawCourse, rawLesson) {
-    const sidebarLessons = rawCourse.lessons.map((rl) => {
-      const ll = localizedLesson(rl);
-      return `<li class="sidebar-lesson ${rl.id === rawLesson.id ? "active" : ""} ${progress[rl.id] ? "done" : ""}" data-lesson="${rl.id}" tabindex="0" role="button">${escapeHtml(ll.title)}</li>`;
-    }).join("");
+  function renderLesson(lessonId) {
+    const found = findLesson(lessonId);
+    if (!found) return;
+    const { track, course, lesson, rawTrack, rawCourse, rawLesson } = found;
+    const done     = !!progress[rawLesson.id];
+    const enr      = getEnrichment(rawLesson.id);
+    const isBookmarked = bookmarks.includes(rawLesson.id);
+    const langKey  = lang === "en" ? "en" : "pt";
+    const isProjectLesson = rawLesson.id.includes("-l") && course.title.toLowerCase().includes("project" || "projeto");
+    saveLastLesson(lessonId);
 
-    return `
-      <aside class="lesson-sidebar">
-        <div class="sidebar-track">${track.icon} ${escapeHtml(track.title)}</div>
-        <div class="sidebar-course">${escapeHtml(course.title)}</div>
-        <ul class="sidebar-lessons">${sidebarLessons}</ul>
-      </aside>`;
-  }
+    document.getElementById("lesson-track-link").textContent = track.title;
+    document.getElementById("lesson-track-link").onclick = (e) => { e.preventDefault(); navigate("track", { trackId: rawTrack.id }); };
+    document.getElementById("lesson-breadcrumb").textContent = lesson.title;
 
-  /**
-   * Renders lesson content HTML
-   * @param {Object} lesson - Lesson data
-   * @param {Object} enr - Enrichment data
-   * @param {Object} rawLesson - Raw lesson data
-   * @param {boolean} done - Lesson completion status
-   * @param {boolean} isBookmarked - Bookmark status
-   * @param {string} langKey - Language key
-   * @param {Object} prev - Previous lesson
-   * @param {Object} next - Next lesson
-   * @returns {string} HTML string for lesson content
-   */
-  function renderLessonContent(lesson, enr, rawLesson, done, isBookmarked, langKey, prev, next) {
     const primerText = !seniorMode ? (enr.primer?.[langKey] || enr.primer?.pt) : null;
     const seniorText = enr.seniorNote?.[langKey] || enr.seniorNote?.pt;
 
@@ -1076,49 +876,72 @@
     const seniorHtml = seniorText
       ? `<aside class="lesson-box lesson-box-senior"><h3>${t("lesson.seniorTitle")}</h3><p>${escapeHtml(seniorText)}</p></aside>` : "";
 
+    const sidebarLessons = rawCourse.lessons.map((rl) => {
+      const ll = localizedLesson(rl);
+      return `<li class="sidebar-lesson ${rl.id === rawLesson.id ? "active" : ""} ${progress[rl.id] ? "done" : ""}" data-lesson="${rl.id}" tabindex="0" role="button">${escapeHtml(ll.title)}</li>`;
+    }).join("");
+
     const resourcesHtml = rawLesson.resources?.length
       ? `<div class="lesson-resources"><h3>📎 ${t("lesson.resources")}</h3>${rawLesson.resources.map((r) =>
           `<a class="resource-link" href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">↗ ${escapeHtml(r.label)}</a>`
         ).join("")}</div>` : "";
 
+    const allLessons = rawTrack.courses.flatMap((c) => c.lessons);
+    const idx   = allLessons.findIndex((l) => l.id === rawLesson.id);
+    const prev  = allLessons[idx - 1];
+    const next  = allLessons[idx + 1];
+
+    // Detect if this is a final project lesson — show checklist
+    const isFinalProject = rawLesson.id.endsWith("-l1") &&
+      (rawCourse.id === "s12" || rawCourse.id === "w10" || rawCourse.id === "a9" ||
+       rawCourse.id === "m8"  || rawCourse.id === "p8"  || rawCourse.id === "sec6" ||
+       rawCourse.id === "dev5"|| rawCourse.id === "a11y5"|| rawCourse.id === "lead4");
+
     const processedContent = highlightCode(lesson.content);
 
-    return `
-      <article class="lesson-content">
-        <div class="lesson-header-row">
-          <h1>${escapeHtml(lesson.title)}</h1>
-          <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0">
-            <span class="tier-badge tier-${enr.tier}">${tierLabel(enr.tier)}</span>
-            <button class="btn-bookmark ${isBookmarked ? "bookmarked" : ""}" id="btn-bookmark" title="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}" aria-label="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}">
-              ${isBookmarked ? "⭐" : "☆"}
-            </button>
+    document.getElementById("lesson-detail").innerHTML = `
+      <div class="lesson-layout">
+        <aside class="lesson-sidebar">
+          <div class="sidebar-track">${rawTrack.icon} ${escapeHtml(track.title)}</div>
+          <div class="sidebar-course">${escapeHtml(course.title)}</div>
+          <ul class="sidebar-lessons">${sidebarLessons}</ul>
+        </aside>
+        <article class="lesson-content">
+          <div class="lesson-header-row">
+            <h1>${escapeHtml(lesson.title)}</h1>
+            <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0">
+              <span class="tier-badge tier-${enr.tier}">${tierLabel(enr.tier)}</span>
+              <button class="btn-bookmark ${isBookmarked ? "bookmarked" : ""}" id="btn-bookmark" title="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}" aria-label="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}">
+                ${isBookmarked ? "⭐" : "☆"}
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="lesson-meta-row">
-          <span class="lesson-meta-item">⏱ ${escapeHtml(lesson.duration)}</span>
-          <span class="lesson-meta-item">${done ? "✅ " + t("lesson.completed") : "📖 " + t("lesson.inProgress")}</span>
-        </div>
-        ${primerHtml}
-        <div class="lesson-body">${processedContent}</div>
-        ${seniorHtml}
-        ${resourcesHtml}
-        <div id="lesson-checklist-zone"></div>
-        <div class="lesson-actions">
-          <button class="btn btn-primary" id="btn-complete">${done ? t("lesson.unmarkComplete") : t("lesson.markComplete")}</button>
-          ${prev ? `<button class="btn btn-secondary" id="btn-prev">${t("lesson.prev")}</button>` : ""}
-          ${next ? `<button class="btn btn-secondary" id="btn-next">${t("lesson.next")}</button>` : ""}
-        </div>
-      </article>`;
-  }
+          <div class="lesson-meta-row">
+            <span class="lesson-meta-item">⏱ ${escapeHtml(lesson.duration)}</span>
+            <span class="lesson-meta-item">${done ? "✅ " + t("lesson.completed") : "📖 " + t("lesson.inProgress")}</span>
+          </div>
+          ${primerHtml}
+          <div class="lesson-body">${processedContent}</div>
+          ${seniorHtml}
+          ${resourcesHtml}
+          <div id="lesson-checklist-zone"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" id="btn-complete">${done ? t("lesson.unmarkComplete") : t("lesson.markComplete")}</button>
+            ${prev ? `<button class="btn btn-secondary" id="btn-prev">${t("lesson.prev")}</button>` : ""}
+            ${next ? `<button class="btn btn-secondary" id="btn-next">${t("lesson.next")}</button>` : ""}
+          </div>
+        </article>
+      </div>`;
 
-  /**
-   * Sets up lesson event listeners
-   * @param {string} lessonId - Lesson identifier
-   * @param {Object} rawLesson - Raw lesson data
-   * @param {Object} prev - Previous lesson
-   * @param {Object} next - Next lesson
-   */
-  function setupLessonEventListeners(lessonId, rawLesson, prev, next) {
+    // Attach copy buttons to code blocks
+    attachCopyButtons(document.getElementById("lesson-detail"));
+
+    // Render checklist if final project lesson
+    if (isFinalProject) {
+      const zone = document.getElementById("lesson-checklist-zone");
+      renderChecklist(rawTrack.id, zone);
+    }
+
     document.getElementById("btn-bookmark").addEventListener("click", () => {
       toggleBookmark(rawLesson.id);
       renderLesson(lessonId);
@@ -1142,155 +965,8 @@
     });
   }
 
-  /**
-   * Checks if lesson is a final project lesson
-   * @param {string} lessonId - Lesson identifier
-   * @param {string} courseId - Course identifier
-   * @returns {boolean} True if final project lesson
-   */
-  function isFinalProjectLesson(lessonId, courseId) {
-    return lessonId.endsWith("-l1") &&
-      (courseId === "s12" || courseId === "w10" || courseId === "a9" ||
-       courseId === "m8"  || courseId === "p8"  || courseId === "sec6" ||
-       courseId === "dev5"|| courseId === "a11y5"|| courseId === "lead4");
-  }
-
-  /**
-   * Renders lesson interface
-   * @param {string} lessonId - Lesson identifier
-   */
-  function renderLesson(lessonId) {
-    const found = findLesson(lessonId);
-    if (!found) return;
-    const { track, course, lesson, rawTrack, rawCourse, rawLesson } = found;
-    const done     = !!progress[rawLesson.id];
-    const enr      = getEnrichment(rawLesson.id);
-    const isBookmarked = bookmarks.includes(rawLesson.id);
-    const langKey  = getCurrentLangKey();
-    saveLastLesson(lessonId);
-
-    document.getElementById("lesson-track-link").textContent = track.title;
-    document.getElementById("lesson-track-link").onclick = (e) => { e.preventDefault(); navigate("track", { trackId: rawTrack.id }); };
-    document.getElementById("lesson-breadcrumb").textContent = lesson.title;
-
-    const allLessons = rawTrack.courses.flatMap((c) => c.lessons);
-    const idx   = allLessons.findIndex((l) => l.id === rawLesson.id);
-    const prev  = allLessons[idx - 1];
-    const next  = allLessons[idx + 1];
-
-    const sidebarHtml = renderLessonSidebar(track, course, rawCourse, rawLesson);
-    const contentHtml = renderLessonContent(lesson, enr, rawLesson, done, isBookmarked, langKey, prev, next);
-
-    document.getElementById("lesson-detail").innerHTML = `
-      <div class="lesson-layout">
-        ${sidebarHtml}
-        ${contentHtml}
-      </div>`;
-
-    // Attach copy buttons to code blocks
-    attachCopyButtons(document.getElementById("lesson-detail"));
-
-    // Render checklist if final project lesson
-    if (isFinalProjectLesson(rawLesson.id, rawCourse.id)) {
-      const zone = document.getElementById("lesson-checklist-zone");
-      renderChecklist(rawTrack.id, zone);
-    }
-
-    setupLessonEventListeners(lessonId, rawLesson, prev, next);
-  }
-
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
-  /**
-   * Exports user progress as JSON file
-   */
-  function exportProgress() {
-    const data = {
-      progress: progress,
-      bookmarks: bookmarks,
-      quizzesPassed: quizzesPassed,
-      checklistState: checklistState,
-      persona: persona,
-      theme: theme,
-      seniorMode: seniorMode,
-      lang: lang,
-      exportDate: new Date().toISOString()
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `testers-guild-progress-${new Date().toISOString().split("T")[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast(t("dashboard.exportSuccess"));
-  }
-
-  /**
-   * Imports user progress from JSON file
-   * @param {File} file - JSON file to import
-   */
-  function importProgress(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        
-        // Validate data structure
-        if (typeof data !== "object" || data === null) {
-          throw new Error("Invalid data format");
-        }
-
-        // Import data with validation
-        if (data.progress && typeof data.progress === "object") {
-          progress = data.progress;
-          localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress));
-        }
-        if (Array.isArray(data.bookmarks)) {
-          bookmarks = data.bookmarks;
-          window.saveJson(STORAGE_BOOKMARKS, bookmarks);
-        }
-        if (data.quizzesPassed && typeof data.quizzesPassed === "object") {
-          quizzesPassed = data.quizzesPassed;
-          window.saveJson(STORAGE_QUIZZES, quizzesPassed);
-        }
-        if (data.checklistState && typeof data.checklistState === "object") {
-          checklistState = data.checklistState;
-          window.saveJson(STORAGE_CHECKLISTS, checklistState);
-        }
-        if (data.persona && ["beginner", "experienced", "senior"].includes(data.persona)) {
-          persona = data.persona;
-          localStorage.setItem(STORAGE_PERSONA, persona);
-        }
-        if (data.theme && ["light", "dark"].includes(data.theme)) {
-          theme = data.theme;
-          localStorage.setItem(STORAGE_THEME, theme);
-          applyTheme();
-        }
-        if (typeof data.seniorMode === "boolean") {
-          seniorMode = data.seniorMode;
-          localStorage.setItem(STORAGE_SENIOR_MODE, String(seniorMode));
-          applySeniorMode();
-        }
-        if (data.lang && ["pt", "en"].includes(data.lang)) {
-          lang = data.lang;
-          window.lang = lang;
-          localStorage.setItem(STORAGE_LANG, lang);
-        }
-
-        showToast(t("dashboard.importSuccess"));
-        renderDashboard();
-      } catch (error) {
-        console.error("Import error:", error);
-        showToast(t("dashboard.importError"));
-      }
-    };
-    reader.readAsText(file);
-  }
-
   function renderDashboard() {
     const global = getGlobalProgress();
     const passedCount = Object.keys(quizzesPassed).length;
@@ -1301,37 +977,20 @@
         <div class="value">${global.pct}%</div>
         <div class="progress-bar" style="margin-top:0.5rem"><div class="progress-fill" style="width:${global.pct}%"></div></div>
       </div>
-      <div class="dash-card"><h3>${t("dashboard.quizzesPassedLabel")}</h3><div class="value">${passedCount}/9</div></div>
+      <div class="dash-card"><h3>${lang === "en" ? "Quizzes passed" : "Quizzes aprovados"}</h3><div class="value">${passedCount}/9</div></div>
       <div class="dash-card"><h3>${t("dashboard.totalCost")}</h3><div class="value">${t("price")}</div></div>`;
 
     renderAchievements();
 
-    // Setup export/import buttons
-    document.getElementById("btn-export-progress").addEventListener("click", exportProgress);
-    document.getElementById("btn-import-progress").addEventListener("click", () => {
-      document.getElementById("import-file-input").click();
-    });
-    document.getElementById("import-file-input").addEventListener("change", (e) => {
-      if (e.target.files.length > 0) {
-        importProgress(e.target.files[0]);
-        e.target.value = ""; // Reset file input
-      }
-    });
-
     const grid = document.getElementById("dashboard-tracks");
-    if (grid) {
-      grid.innerHTML = "";
-      const tracksData = tracks;
-      if (tracksData && tracksData.length > 0) {
-        tracksData.forEach((tr) => renderTrackCard(tr, "dashboard-tracks"));
-      }
-    }
+    grid.innerHTML = "";
+    tracks.forEach((tr) => renderTrackCard(tr, "dashboard-tracks"));
 
     // Bookmarks section
     const bmSection = document.getElementById("dashboard-bookmarks");
     if (bmSection) {
       if (!bookmarks.length) {
-        bmSection.innerHTML = `<p class="empty-state" style="padding:1rem;color:var(--text-muted)">${t("dashboard.noBookmarks")}</p>`;
+        bmSection.innerHTML = `<p class="empty-state" style="padding:1rem;color:var(--text-muted)">${lang === "en" ? "No bookmarked lessons yet." : "Nenhuma aula favoritada ainda."}</p>`;
       } else {
         bmSection.innerHTML = bookmarks.map((lid) => {
           const found = findLesson(lid);
@@ -1360,7 +1019,7 @@
       l.courseTitle.toLowerCase().includes(q)
     );
 
-    const glossaryItems = (window.TG_GLOSSARY?.[getCurrentLangKey()]) || [];
+    const glossaryItems = (window.TG_GLOSSARY?.[lang === "en" ? "en" : "pt"]) || [];
     const glossaryMatches = glossaryItems.filter((g) =>
       g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q)
     );
@@ -1459,7 +1118,6 @@
   applyStaticI18n();
   updateLangToggle();
   checkAchievements();
-  initDiscordBanner();
   renderHome();
 
 })();
