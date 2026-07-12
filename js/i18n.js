@@ -17,6 +17,7 @@ window.TG_I18N = {
       statPrice: "Para sempre",
       ctaExplore: "Explorar Trilhas →",
       ctaProgress: "Ver Progresso",
+      loading: "Carregando...",
     },
     persona: {
       title: "Qual é o seu perfil?",
@@ -145,6 +146,7 @@ window.TG_I18N = {
       statPrice: "Forever",
       ctaExplore: "Explore Paths →",
       ctaProgress: "View Progress",
+      loading: "Loading...",
     },
     persona: {
       title: "What's your profile?",

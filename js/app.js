@@ -617,8 +617,15 @@
 
   function renderHome() {
     const global = getGlobalProgress();
-    document.getElementById("stat-lessons").textContent = global.total;
-    document.getElementById("stat-tracks").textContent  = getTracks().length;
+    
+    // Update stats with actual values, showing loading text if data not ready
+    const tracksCount = getTracks().length;
+    const lessonsCount = global.total;
+    const loadingText = t("hero.loading");
+    
+    document.getElementById("stat-tracks").textContent = tracksCount > 0 ? tracksCount : loadingText;
+    document.getElementById("stat-lessons").textContent = lessonsCount > 0 ? lessonsCount : loadingText;
+    
     document.querySelectorAll(".persona-card").forEach((el) => el.classList.toggle("active", el.dataset.persona === persona));
 
     renderHomeFilterBar();
