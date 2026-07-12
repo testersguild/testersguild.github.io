@@ -12,13 +12,17 @@
   const STORAGE_SENIOR_MODE = "testers-guild-senior-mode";
   const STORAGE_DISCORD_BANNER = "testers-guild-discord-banner";
 
-  const tracks         = window.TG_QAWAY_TRACKS    || [];
   const enOverlay      = window.TG_QAWAY_EN        || { tracks: {}, courses: {}, lessons: {} };
   const enrichment     = window.TG_LESSON_ENRICHMENT || {};
   const quizzes        = window.TG_QUIZZES          || {};
   const checklists     = window.TG_CHECKLISTS       || {};
   const labsData       = window.TG_LABS             || {};
   const achievementsList = window.TG_ACHIEVEMENTS   || [];
+  
+  // Use getter function to always get latest tracks data
+  function getTracks() {
+    return window.TG_QAWAY_TRACKS || [];
+  }
 
   let lang        = getStorage(STORAGE_LANG, "tg-qaway-lang") || "pt";
   // Expose lang globally for utils.js
@@ -304,27 +308,37 @@
   }
 
   function getGlobalProgress() {
-    // Defensive check to ensure tracks array is valid
-    if (!tracks || !Array.isArray(tracks) || tracks.length === 0) {
+    // Always get fresh tracks data
+    const tracksData = getTracks();
+    
+    // Only return 0 if tracks array is actually empty or invalid
+    if (!tracksData || !Array.isArray(tracksData) || tracksData.length === 0) {
       return { done: 0, total: 0, pct: 0 };
     }
     
-    const all  = tracks.flatMap((tr) => {
-      if (!tr.courses || !Array.isArray(tr.courses)) return [];
-      return tr.courses.flatMap((c) => {
-        if (!c.lessons || !Array.isArray(c.lessons)) return [];
-        return c.lessons;
+    try {
+      const all  = tracksData.flatMap((tr) => {
+        if (!tr.courses || !Array.isArray(tr.courses)) return [];
+        return tr.courses.flatMap((c) => {
+          if (!c.lessons || !Array.isArray(c.lessons)) return [];
+          return c.lessons;
+        });
       });
-    });
-    const done = all.filter((l) => progress[l.id]).length;
-    return { done, total: all.length, pct: all.length ? Math.round((done / all.length) * 100) : 0 };
+      const done = all.filter((l) => progress[l.id]).length;
+      const result = { done, total: all.length, pct: all.length ? Math.round((done / all.length) * 100) : 0 };
+      return result;
+    } catch (error) {
+      console.error('Error calculating global progress:', error);
+      return { done: 0, total: 0, pct: 0 };
+    }
   }
 
   function getAllLessons() {
-    if (!tracks || !Array.isArray(tracks)) return [];
+    const tracksData = getTracks();
+    if (!tracksData || !Array.isArray(tracksData)) return [];
     
     const lessons = [];
-    tracks.forEach((track) => {
+    tracksData.forEach((track) => {
       if (!track.courses || !Array.isArray(track.courses)) return;
       
       const lt = localizedTrack(track);
@@ -366,14 +380,16 @@
   }
 
   function findTrack(id) { 
-    if (!tracks || !Array.isArray(tracks)) return null;
-    return tracks.find((tr) => tr.id === id); 
+    const tracksData = getTracks();
+    if (!tracksData || !Array.isArray(tracksData)) return null;
+    return tracksData.find((tr) => tr.id === id); 
   }
 
   function findLesson(lessonId) {
-    if (!tracks || !Array.isArray(tracks)) return null;
+    const tracksData = getTracks();
+    if (!tracksData || !Array.isArray(tracksData)) return null;
     
-    for (const track of tracks) {
+    for (const track of tracksData) {
       if (!track.courses || !Array.isArray(track.courses)) continue;
       
       for (const course of track.courses) {
@@ -403,7 +419,7 @@
       { id: "first_lesson",    test: () => global.done >= 1 },
       { id: "ten_lessons",     test: () => global.done >= 10 },
       { id: "fifty_lessons",   test: () => global.done >= 50 },
-      { id: "track_complete",  test: () => tracks.some((tr) => getTrackProgress(tr).pct === 100) },
+      { id: "track_complete",  test: () => getTracks().some((tr) => getTrackProgress(tr).pct === 100) },
       { id: "quiz_pass",       test: () => passedAll >= 1 },
       { id: "all_quizzes",     test: () => passedAll >= 9 },
       { id: "recruit_route",   test: () => {
@@ -602,16 +618,17 @@
   function renderHome() {
     const global = getGlobalProgress();
     document.getElementById("stat-lessons").textContent = global.total;
-    document.getElementById("stat-tracks").textContent  = tracks.length;
+    document.getElementById("stat-tracks").textContent  = getTracks().length;
     document.querySelectorAll(".persona-card").forEach((el) => el.classList.toggle("active", el.dataset.persona === persona));
 
     renderHomeFilterBar();
 
+    const tracksData = getTracks();
     let filtered;
     if (homeFilter === "all") {
-      filtered = sortTracksForPersona(tracks);
+      filtered = sortTracksForPersona(tracksData);
     } else {
-      filtered = tracks.filter((tr) => {
+      filtered = tracksData.filter((tr) => {
         const audience = TRACK_AUDIENCE[tr.id] || "intermediate"; // Default to intermediate if not found
         return audience === homeFilter;
       });
@@ -648,11 +665,12 @@
     const grid = document.getElementById("tracks-grid");
     if (grid) {
       grid.innerHTML = "";
+      const tracksData = getTracks();
       let filtered;
       if (trackFilter === "all") {
-        filtered = sortTracksForPersona(tracks);
+        filtered = sortTracksForPersona(tracksData);
       } else {
-        filtered = tracks.filter((tr) => {
+        filtered = tracksData.filter((tr) => {
           const audience = TRACK_AUDIENCE[tr.id] || "intermediate"; // Default to intermediate if not found
           return audience === trackFilter;
         });
@@ -1314,8 +1332,9 @@
     const grid = document.getElementById("dashboard-tracks");
     if (grid) {
       grid.innerHTML = "";
-      if (tracks && tracks.length > 0) {
-        tracks.forEach((tr) => renderTrackCard(tr, "dashboard-tracks"));
+      const tracksData = getTracks();
+      if (tracksData && tracksData.length > 0) {
+        tracksData.forEach((tr) => renderTrackCard(tr, "dashboard-tracks"));
       }
     }
 
@@ -1452,6 +1471,16 @@
   updateLangToggle();
   checkAchievements();
   initDiscordBanner();
-  renderHome();
+  
+  // Ensure data is loaded before rendering
+  const checkDataAndRender = () => {
+    if (typeof window.TG_QAWAY_TRACKS !== 'undefined' && window.TG_QAWAY_TRACKS.length > 0) {
+      renderHome();
+    } else {
+      setTimeout(checkDataAndRender, 100);
+    }
+  };
+  
+  checkDataAndRender();
 
 })();
