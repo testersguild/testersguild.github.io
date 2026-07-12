@@ -66,7 +66,7 @@ window.TG_I18N = {
     },
     quiz: {
       title: "Quiz da Trilha", start: "Iniciar Quiz", submit: "Verificar respostas",
-      passed: "Aprovado!", failed: "Tente novamente", score: "Acertos",
+      passed: "Aprovado!", failed: "Tente novamente", score: "Pontuação",
       explain: "Explicação", backTrack: "← Voltar à trilha", takeQuiz: "🎯 Fazer Quiz",
       alreadyPassed: "Você já aprovou este quiz!", tryAgain: "Tentar Novamente",
       questions: "perguntas", pass: "Aprovação",
@@ -82,6 +82,7 @@ window.TG_I18N = {
       light: "Claro", dark: "Escuro",
       lightTitle: "☀️ Tema claro", darkTitle: "🌙 Tema escuro",
       seniorModeEnabled: "Modo Sênior ativado", seniorModeDisabled: "Modo Sênior desativado",
+      seniorModeOn: "Modo Sênior ATIVO", seniorModeOff: "Modo Sênior",
     },
     certificate: {
       title: "Certificado da Guilda", download: "Imprimir / Salvar PDF",
@@ -97,6 +98,7 @@ window.TG_I18N = {
       searchPlaceholder: "Buscar trilhas ou aulas…", noResults: "Nenhum resultado encontrado.",
       bookmarksTitle: "Aulas Favoritas", quizzesPassed: "Quizzes aprovados",
       noBookmarks: "Nenhuma aula favoritada ainda.", complete: "Completo",
+      quizzesPassedLabel: "Quizzes aprovados",
     },
     toast: {
       lessonDone: "Aula concluída! 🎉", lessonUndone: "Aula desmarcada",
@@ -189,7 +191,7 @@ window.TG_I18N = {
     },
     quiz: {
       title: "Path Quiz", start: "Start Quiz", submit: "Check answers",
-      passed: "Passed!", failed: "Try again", score: "Correct",
+      passed: "Passed!", failed: "Try again", score: "Score",
       explain: "Explanation", backTrack: "← Back to path", takeQuiz: "🎯 Take Quiz",
       alreadyPassed: "You already passed this quiz!", tryAgain: "Try Again",
       questions: "questions", pass: "Pass",
@@ -205,6 +207,7 @@ window.TG_I18N = {
       light: "Light", dark: "Dark",
       lightTitle: "☀️ Light theme", darkTitle: "🌙 Dark theme",
       seniorModeEnabled: "Senior mode enabled", seniorModeDisabled: "Senior mode disabled",
+      seniorModeOn: "Senior Mode ON", seniorModeOff: "Senior Mode",
     },
     certificate: {
       title: "Guild Certificate", download: "Print / Save PDF",
@@ -220,6 +223,7 @@ window.TG_I18N = {
       searchPlaceholder: "Search paths or lessons…", noResults: "No results found.",
       bookmarksTitle: "Bookmarked Lessons", quizzesPassed: "Quizzes passed",
       noBookmarks: "No bookmarked lessons yet.", complete: "Complete",
+      quizzesPassedLabel: "Quizzes passed",
     },
     toast: {
       lessonDone: "Lesson completed! 🎉", lessonUndone: "Lesson unmarked",

@@ -28,13 +28,34 @@ function getCurrentLangKey() {
   return "pt";
 }
 
+/**
+ * Loads and parses JSON from localStorage
+ * @param {string} key - Storage key
+ * @param {*} fallback - Fallback value if parsing fails
+ * @returns {*} Parsed data or fallback
+ */
+function loadJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+}
+
+/**
+ * Saves data as JSON to localStorage
+ * @param {string} key - Storage key
+ * @param {*} data - Data to save
+ */
+function saveJson(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
 // Export for Node.js/test environment
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { escapeHtml, getCurrentLangKey };
+  module.exports = { escapeHtml, getCurrentLangKey, loadJson, saveJson };
 }
 
 // Export for browser environment
 if (typeof window !== "undefined") {
   window.escapeHtml = escapeHtml;
   window.getCurrentLangKey = getCurrentLangKey;
+  window.loadJson = loadJson;
+  window.saveJson = saveJson;
 }

@@ -50,6 +50,12 @@
   };
 
   // ── Storage helpers ───────────────────────────────────────────────────────
+  /**
+   * Gets value from localStorage with legacy key fallback
+   * @param {string} key - Primary storage key
+   * @param {string} legacyKey - Fallback legacy key
+   * @returns {string|null} Stored value or null
+   */
   function getStorage(key, legacyKey) {
     let val = localStorage.getItem(key);
     if (!val && legacyKey) {
@@ -59,12 +65,12 @@
     return val;
   }
 
-  function loadJson(key, fallback) {
-    try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
-  }
+  // loadJson and saveJson are now in utils.js and shared across the app
 
-  function saveJson(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-
+  /**
+   * Loads user progress from localStorage
+   * @returns {Object} Progress object
+   */
   function loadProgress() {
     try {
       const raw = getStorage(STORAGE_PROGRESS, "tg-qaway-progress");
@@ -72,10 +78,23 @@
     } catch { return {}; }
   }
 
+  /**
+   * Saves current progress to localStorage
+   */
   function saveProgress() { localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress)); }
+
+  /**
+   * Saves last viewed lesson ID
+   * @param {string} id - Lesson identifier
+   */
   function saveLastLesson(id) { localStorage.setItem(STORAGE_LAST_LESSON, id); }
 
   // ── i18n ──────────────────────────────────────────────────────────────────
+  /**
+   * Translates a key using current language
+   * @param {string} key - Translation key (dot notation)
+   * @returns {string} Translated string or key if not found
+   */
   function t(key) {
     const parts = key.split(".");
     let node = window.TG_I18N?.[lang];
@@ -86,6 +105,11 @@
     return node;
   }
 
+  /**
+   * Returns localized track data
+   * @param {Object} track - Track data object
+   * @returns {Object} Localized track data
+   */
   function localizedTrack(track) {
     if (lang === "en" && enOverlay.tracks[track.id]) {
       const o = enOverlay.tracks[track.id];
@@ -94,12 +118,22 @@
     return track;
   }
 
+  /**
+   * Returns localized course data
+   * @param {Object} course - Course data object
+   * @returns {Object} Localized course data
+   */
   function localizedCourse(course) {
     if (lang === "en" && enOverlay.courses[course.id])
       return { ...course, title: enOverlay.courses[course.id].title };
     return course;
   }
 
+  /**
+   * Returns localized lesson data
+   * @param {Object} lesson - Lesson data object
+   * @returns {Object} Localized lesson data
+   */
   function localizedLesson(lesson) {
     if (lang === "en" && enOverlay.lessons[lesson.id]) {
       const o = enOverlay.lessons[lesson.id];
@@ -108,10 +142,20 @@
     return lesson;
   }
 
+  /**
+   * Gets enrichment data for a lesson
+   * @param {string} lessonId - Lesson identifier
+   * @returns {Object} Enrichment data with tier, primer, and senior note
+   */
   function getEnrichment(lessonId) {
     return enrichment[lessonId] || { tier: "intermediate", primer: null, seniorNote: null };
   }
 
+  /**
+   * Returns localized label for lesson tier
+   * @param {string} tier - Tier level (beginner, intermediate, senior)
+   * @returns {string} Localized tier label
+   */
   function tierLabel(tier) {
     const map = { beginner: "lesson.tierBeginner", intermediate: "lesson.tierIntermediate", senior: "lesson.tierSenior" };
     return t(map[tier] || "lesson.tierIntermediate");
@@ -119,6 +163,9 @@
 
 
   // ── Theme ─────────────────────────────────────────────────────────────────
+  /**
+   * Applies current theme to document
+   */
   function applyTheme() {
     document.documentElement.setAttribute("data-theme", theme);
     const btn = document.getElementById("theme-toggle");
@@ -126,6 +173,9 @@
     localStorage.setItem(STORAGE_THEME, theme);
   }
 
+  /**
+   * Toggles between dark and light theme
+   */
   function toggleTheme() {
     theme = theme === "dark" ? "light" : "dark";
     applyTheme();
@@ -133,16 +183,22 @@
   }
 
   // ── Senior Mode ───────────────────────────────────────────────────────────
+  /**
+   * Applies senior mode state to document
+   */
   function applySeniorMode() {
     document.documentElement.classList.toggle("senior-mode", seniorMode);
     const btn = document.getElementById("senior-mode-toggle");
     if (btn) {
       btn.classList.toggle("active-toggle", seniorMode);
-      btn.title = seniorMode ? (lang === "en" ? "Senior Mode ON" : "Modo Sênior ATIVO") : (lang === "en" ? "Senior Mode" : "Modo Sênior");
+      btn.title = seniorMode ? t("settings.seniorModeOn") : t("settings.seniorModeOff");
     }
     localStorage.setItem(STORAGE_SENIOR_MODE, String(seniorMode));
   }
 
+  /**
+   * Toggles senior mode on/off
+   */
   function toggleSeniorMode() {
     seniorMode = !seniorMode;
     applySeniorMode();
@@ -151,6 +207,10 @@
   }
 
   // ── Language ──────────────────────────────────────────────────────────────
+  /**
+   * Sets application language
+   * @param {string} newLang - Language code ("en" or "pt")
+   */
   function setLang(newLang) {
     lang = newLang === "en" ? "en" : "pt";
     window.lang = lang; // Keep global lang in sync
@@ -164,6 +224,9 @@
     showToast(t("toast.langChanged"));
   }
 
+  /**
+   * Toggles between Portuguese and English
+   */
   function toggleLang() { setLang(lang === "pt" ? "en" : "pt"); }
 
   function applyStaticI18n() {
@@ -564,7 +627,7 @@
     if (!container) return;
     const labs = labsData[getCurrentLangKey()] || labsData.pt || [];
     if (!labs.length) {
-      container.innerHTML = `<p class="empty-state">${lang === "en" ? "No labs available." : "Nenhum lab disponível."}</p>`;
+      container.innerHTML = `<p class="empty-state">${t("labs.noLabs")}</p>`;
       return;
     }
 
@@ -595,13 +658,113 @@
         <h3><a href="${escapeHtml(lab.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(lab.name)}</a></h3>
         <p>${escapeHtml(lab.desc)}</p>
         <a href="${escapeHtml(lab.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm lab-open-btn">
-          ${lang === "en" ? "Open lab ↗" : "Abrir lab ↗"}
+          ${t("labs.openLab")}
         </a>
       </article>`).join("")}</div>`;
   }
 
 
   // ── Quiz ──────────────────────────────────────────────────────────────────
+  
+  /**
+   * Renders quiz questions HTML
+   * @param {Array} questions - Array of quiz questions
+   * @returns {string} HTML string for quiz questions
+   */
+  function renderQuizQuestions(questions) {
+    return questions.map((q, qi) => `
+      <div class="quiz-question" data-qi="${qi}">
+        <p class="quiz-q-text"><strong>${qi + 1}.</strong> ${escapeHtml(q.q)}</p>
+        <div class="quiz-options">
+          ${q.options.map((opt, oi) => `
+            <label class="quiz-option" data-qi="${qi}" data-oi="${oi}">
+              <input type="radio" name="q${qi}" value="${oi}" class="quiz-radio">
+              <span class="quiz-option-text">${escapeHtml(opt)}</span>
+            </label>`).join("")}
+        </div>
+        <div class="quiz-explain hidden" id="explain-${qi}"></div>
+      </div>`).join("");
+  }
+
+  /**
+   * Handles quiz submission and result display
+   * @param {Object} quizData - Quiz data object
+   * @param {string} trackId - Track identifier
+   * @param {HTMLElement} container - Quiz container element
+   */
+  function handleQuizSubmit(quizData, trackId, container) {
+    let correct = 0;
+    quizData.questions.forEach((q, qi) => {
+      const selected = quizState.answers[qi];
+      const explainEl = document.getElementById(`explain-${qi}`);
+      const qBlock    = container.querySelector(`.quiz-question[data-qi="${qi}"]`);
+
+      // Highlight options
+      qBlock.querySelectorAll(".quiz-option").forEach((lbl) => {
+        const oi = parseInt(lbl.dataset.oi);
+        lbl.classList.add(oi === q.correct ? "correct" : "wrong-opt");
+        if (oi === selected) lbl.classList.add("selected-opt");
+      });
+      qBlock.querySelectorAll("input[type=radio]").forEach((r) => r.disabled = true);
+
+      if (selected === q.correct) correct++;
+      if (explainEl && q.explain) {
+        explainEl.textContent = q.explain;
+        explainEl.classList.remove("hidden");
+      }
+    });
+
+    const passed = correct >= quizData.passScore;
+    if (passed && !quizzesPassed[trackId]) {
+      quizzesPassed[trackId] = { passedAt: new Date().toISOString(), score: correct };
+      saveJson(STORAGE_QUIZZES, quizzesPassed);
+      checkAchievements();
+      showToast(t("toast.quizPassed"));
+    }
+
+    const resultEl = document.getElementById("quiz-result");
+    resultEl.className = `quiz-result ${passed ? "quiz-passed" : "quiz-failed"}`;
+    resultEl.innerHTML = `
+      <div class="quiz-result-icon">${passed ? "🎯" : "📚"}</div>
+      <div class="quiz-result-title">${passed ? t("quiz.passed") : t("quiz.failed")}</div>
+      <div class="quiz-result-score">${t("quiz.score")}: ${correct}/${quizData.questions.length}</div>
+      ${!passed ? `<button class="btn btn-primary btn-sm" id="btn-quiz-retry">${t("quiz.tryAgain")}</button>` : ""}`;
+    resultEl.classList.remove("hidden");
+
+    if (!passed) {
+      document.getElementById("btn-quiz-retry")?.addEventListener("click", () => renderQuiz(trackId));
+    }
+  }
+
+  /**
+   * Sets up quiz event listeners
+   * @param {string} trackId - Track identifier
+   * @param {Object} quizData - Quiz data object
+   * @param {HTMLElement} container - Quiz container element
+   */
+  function setupQuizEventListeners(trackId, quizData, container) {
+    document.getElementById("btn-quiz-back").addEventListener("click", () => navigate("track", { trackId }));
+
+    document.getElementById("quiz-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (quizState.submitted) return;
+      quizState.submitted = true;
+      handleQuizSubmit(quizData, trackId, container);
+    });
+
+    // Capture radio changes
+    container.querySelectorAll(".quiz-radio").forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const qi = parseInt(radio.closest(".quiz-option").dataset.qi);
+        quizState.answers[qi] = parseInt(radio.value);
+      });
+    });
+  }
+
+  /**
+   * Renders quiz interface for a track
+   * @param {string} trackId - Track identifier
+   */
   function renderQuiz(trackId) {
     const container = document.getElementById("quiz-content");
     if (!container) return;
@@ -612,7 +775,7 @@
     const langKey  = getCurrentLangKey();
     const quizData = quizzes[trackId]?.[langKey] || quizzes[trackId]?.pt;
     if (!quizData) {
-      container.innerHTML = `<p class="empty-state">${lang === "en" ? "No quiz available for this track yet." : "Nenhum quiz disponível para esta trilha ainda."}</p>`;
+      container.innerHTML = `<p class="empty-state">${t("quiz.noQuiz")}</p>`;
       return;
     }
 
@@ -626,18 +789,7 @@
     // Reset quiz state for this track
     quizState = { trackId, answers: {}, submitted: false };
 
-    const questionsHtml = quizData.questions.map((q, qi) => `
-      <div class="quiz-question" data-qi="${qi}">
-        <p class="quiz-q-text"><strong>${qi + 1}.</strong> ${escapeHtml(q.q)}</p>
-        <div class="quiz-options">
-          ${q.options.map((opt, oi) => `
-            <label class="quiz-option" data-qi="${qi}" data-oi="${oi}">
-              <input type="radio" name="q${qi}" value="${oi}" class="quiz-radio">
-              <span class="quiz-option-text">${escapeHtml(opt)}</span>
-            </label>`).join("")}
-        </div>
-        <div class="quiz-explain hidden" id="explain-${qi}"></div>
-      </div>`).join("");
+    const questionsHtml = renderQuizQuestions(quizData.questions);
 
     container.innerHTML = `
       <div class="quiz-card">
@@ -645,10 +797,10 @@
           <span class="track-icon">${track.icon}</span>
           <div>
             <h2>${escapeHtml(quizData.title)}</h2>
-            <p class="quiz-meta">${quizData.questions.length} ${lang === "en" ? "questions" : "perguntas"} · ${lang === "en" ? "Pass" : "Aprovação"}: ${quizData.passScore}/${quizData.questions.length}</p>
+            <p class="quiz-meta">${quizData.questions.length} ${t("quiz.questions")} · ${t("quiz.pass")}: ${quizData.passScore}/${quizData.questions.length}</p>
           </div>
         </div>
-        ${alreadyPassed ? `<div class="quiz-passed-banner">🎯 ${lang === "en" ? "You already passed this quiz!" : "Você já passou neste quiz!"}</div>` : ""}
+        ${alreadyPassed ? `<div class="quiz-passed-banner">🎯 ${t("quiz.alreadyPassed")}</div>` : ""}
         <form id="quiz-form" class="quiz-form">
           ${questionsHtml}
           <div class="quiz-actions">
@@ -659,63 +811,7 @@
         <div id="quiz-result" class="quiz-result hidden"></div>
       </div>`;
 
-    document.getElementById("btn-quiz-back").addEventListener("click", () => navigate("track", { trackId }));
-
-    document.getElementById("quiz-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (quizState.submitted) return;
-      quizState.submitted = true;
-
-      let correct = 0;
-      quizData.questions.forEach((q, qi) => {
-        const selected = quizState.answers[qi];
-        const explainEl = document.getElementById(`explain-${qi}`);
-        const qBlock    = container.querySelector(`.quiz-question[data-qi="${qi}"]`);
-
-        // Highlight options
-        qBlock.querySelectorAll(".quiz-option").forEach((lbl) => {
-          const oi = parseInt(lbl.dataset.oi);
-          lbl.classList.add(oi === q.correct ? "correct" : "wrong-opt");
-          if (oi === selected) lbl.classList.add("selected-opt");
-        });
-        qBlock.querySelectorAll("input[type=radio]").forEach((r) => r.disabled = true);
-
-        if (selected === q.correct) correct++;
-        if (explainEl && q.explain) {
-          explainEl.textContent = q.explain;
-          explainEl.classList.remove("hidden");
-        }
-      });
-
-      const passed = correct >= quizData.passScore;
-      if (passed && !quizzesPassed[trackId]) {
-        quizzesPassed[trackId] = { passedAt: new Date().toISOString(), score: correct };
-        saveJson(STORAGE_QUIZZES, quizzesPassed);
-        checkAchievements();
-        showToast(t("toast.quizPassed"));
-      }
-
-      const resultEl = document.getElementById("quiz-result");
-      resultEl.className = `quiz-result ${passed ? "quiz-passed" : "quiz-failed"}`;
-      resultEl.innerHTML = `
-        <div class="quiz-result-icon">${passed ? "🎯" : "📚"}</div>
-        <div class="quiz-result-title">${passed ? t("quiz.passed") : t("quiz.failed")}</div>
-        <div class="quiz-result-score">${t("quiz.score")}: ${correct}/${quizData.questions.length}</div>
-        ${!passed ? `<button class="btn btn-primary btn-sm" id="btn-quiz-retry">${lang === "en" ? "Try Again" : "Tentar Novamente"}</button>` : ""}`;
-      resultEl.classList.remove("hidden");
-
-      if (!passed) {
-        document.getElementById("btn-quiz-retry")?.addEventListener("click", () => renderQuiz(trackId));
-      }
-    });
-
-    // Capture radio changes
-    container.querySelectorAll(".quiz-radio").forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const qi = parseInt(radio.closest(".quiz-option").dataset.qi);
-        quizState.answers[qi] = parseInt(radio.value);
-      });
-    });
+    setupQuizEventListeners(trackId, quizData, container);
   }
 
 
@@ -742,7 +838,7 @@
         <span class="checklist-progress" id="ck-progress-${trackId}">${savedItems.length}/${data.items.length} ${t("checklist.progress")}</span>
       </div>
       <div class="checklist-items">${itemsHtml}</div>
-      ${allDone ? `<div class="checklist-complete">🎉 ${lang === "en" ? "Project complete! Great work." : "Projeto concluído! Parabéns."}</div>` : ""}
+      ${allDone ? `<div class="checklist-complete">🎉 ${t("checklist.complete")}</div>` : ""}
     </div>`;
 
     if (container) {
@@ -759,7 +855,7 @@
           cb.closest(".checklist-item").classList.toggle("checked", cb.checked);
           if (checklistState[trackId].length >= data.items.length) {
             checkAchievements();
-            showToast(lang === "en" ? "✅ Project checklist complete!" : "✅ Checklist do projeto completo!");
+            showToast(t("checklist.toastComplete"));
           }
         });
       });
@@ -844,20 +940,42 @@
   }
 
   // ── Lesson ────────────────────────────────────────────────────────────────
-  function renderLesson(lessonId) {
-    const found = findLesson(lessonId);
-    if (!found) return;
-    const { track, course, lesson, rawTrack, rawCourse, rawLesson } = found;
-    const done     = !!progress[rawLesson.id];
-    const enr      = getEnrichment(rawLesson.id);
-    const isBookmarked = bookmarks.includes(rawLesson.id);
-    const langKey  = getCurrentLangKey();
-    saveLastLesson(lessonId);
+  
+  /**
+   * Renders lesson sidebar HTML
+   * @param {Object} track - Track data
+   * @param {Object} course - Course data
+   * @param {Object} rawCourse - Raw course data
+   * @param {Object} rawLesson - Raw lesson data
+   * @returns {string} HTML string for sidebar
+   */
+  function renderLessonSidebar(track, course, rawCourse, rawLesson) {
+    const sidebarLessons = rawCourse.lessons.map((rl) => {
+      const ll = localizedLesson(rl);
+      return `<li class="sidebar-lesson ${rl.id === rawLesson.id ? "active" : ""} ${progress[rl.id] ? "done" : ""}" data-lesson="${rl.id}" tabindex="0" role="button">${escapeHtml(ll.title)}</li>`;
+    }).join("");
 
-    document.getElementById("lesson-track-link").textContent = track.title;
-    document.getElementById("lesson-track-link").onclick = (e) => { e.preventDefault(); navigate("track", { trackId: rawTrack.id }); };
-    document.getElementById("lesson-breadcrumb").textContent = lesson.title;
+    return `
+      <aside class="lesson-sidebar">
+        <div class="sidebar-track">${track.icon} ${escapeHtml(track.title)}</div>
+        <div class="sidebar-course">${escapeHtml(course.title)}</div>
+        <ul class="sidebar-lessons">${sidebarLessons}</ul>
+      </aside>`;
+  }
 
+  /**
+   * Renders lesson content HTML
+   * @param {Object} lesson - Lesson data
+   * @param {Object} enr - Enrichment data
+   * @param {Object} rawLesson - Raw lesson data
+   * @param {boolean} done - Lesson completion status
+   * @param {boolean} isBookmarked - Bookmark status
+   * @param {string} langKey - Language key
+   * @param {Object} prev - Previous lesson
+   * @param {Object} next - Next lesson
+   * @returns {string} HTML string for lesson content
+   */
+  function renderLessonContent(lesson, enr, rawLesson, done, isBookmarked, langKey, prev, next) {
     const primerText = !seniorMode ? (enr.primer?.[langKey] || enr.primer?.pt) : null;
     const seniorText = enr.seniorNote?.[langKey] || enr.seniorNote?.pt;
 
@@ -866,72 +984,49 @@
     const seniorHtml = seniorText
       ? `<aside class="lesson-box lesson-box-senior"><h3>${t("lesson.seniorTitle")}</h3><p>${escapeHtml(seniorText)}</p></aside>` : "";
 
-    const sidebarLessons = rawCourse.lessons.map((rl) => {
-      const ll = localizedLesson(rl);
-      return `<li class="sidebar-lesson ${rl.id === rawLesson.id ? "active" : ""} ${progress[rl.id] ? "done" : ""}" data-lesson="${rl.id}" tabindex="0" role="button">${escapeHtml(ll.title)}</li>`;
-    }).join("");
-
     const resourcesHtml = rawLesson.resources?.length
       ? `<div class="lesson-resources"><h3>📎 ${t("lesson.resources")}</h3>${rawLesson.resources.map((r) =>
           `<a class="resource-link" href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">↗ ${escapeHtml(r.label)}</a>`
         ).join("")}</div>` : "";
 
-    const allLessons = rawTrack.courses.flatMap((c) => c.lessons);
-    const idx   = allLessons.findIndex((l) => l.id === rawLesson.id);
-    const prev  = allLessons[idx - 1];
-    const next  = allLessons[idx + 1];
-
-    // Detect if this is a final project lesson — show checklist
-    const isFinalProject = rawLesson.id.endsWith("-l1") &&
-      (rawCourse.id === "s12" || rawCourse.id === "w10" || rawCourse.id === "a9" ||
-       rawCourse.id === "m8"  || rawCourse.id === "p8"  || rawCourse.id === "sec6" ||
-       rawCourse.id === "dev5"|| rawCourse.id === "a11y5"|| rawCourse.id === "lead4");
-
     const processedContent = highlightCode(lesson.content);
 
-    document.getElementById("lesson-detail").innerHTML = `
-      <div class="lesson-layout">
-        <aside class="lesson-sidebar">
-          <div class="sidebar-track">${rawTrack.icon} ${escapeHtml(track.title)}</div>
-          <div class="sidebar-course">${escapeHtml(course.title)}</div>
-          <ul class="sidebar-lessons">${sidebarLessons}</ul>
-        </aside>
-        <article class="lesson-content">
-          <div class="lesson-header-row">
-            <h1>${escapeHtml(lesson.title)}</h1>
-            <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0">
-              <span class="tier-badge tier-${enr.tier}">${tierLabel(enr.tier)}</span>
-              <button class="btn-bookmark ${isBookmarked ? "bookmarked" : ""}" id="btn-bookmark" title="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}" aria-label="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}">
-                ${isBookmarked ? "⭐" : "☆"}
-              </button>
-            </div>
+    return `
+      <article class="lesson-content">
+        <div class="lesson-header-row">
+          <h1>${escapeHtml(lesson.title)}</h1>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0">
+            <span class="tier-badge tier-${enr.tier}">${tierLabel(enr.tier)}</span>
+            <button class="btn-bookmark ${isBookmarked ? "bookmarked" : ""}" id="btn-bookmark" title="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}" aria-label="${isBookmarked ? t("lesson.unbookmark") : t("lesson.bookmark")}">
+              ${isBookmarked ? "⭐" : "☆"}
+            </button>
           </div>
-          <div class="lesson-meta-row">
-            <span class="lesson-meta-item">⏱ ${escapeHtml(lesson.duration)}</span>
-            <span class="lesson-meta-item">${done ? "✅ " + t("lesson.completed") : "📖 " + t("lesson.inProgress")}</span>
-          </div>
-          ${primerHtml}
-          <div class="lesson-body">${processedContent}</div>
-          ${seniorHtml}
-          ${resourcesHtml}
-          <div id="lesson-checklist-zone"></div>
-          <div class="lesson-actions">
-            <button class="btn btn-primary" id="btn-complete">${done ? t("lesson.unmarkComplete") : t("lesson.markComplete")}</button>
-            ${prev ? `<button class="btn btn-secondary" id="btn-prev">${t("lesson.prev")}</button>` : ""}
-            ${next ? `<button class="btn btn-secondary" id="btn-next">${t("lesson.next")}</button>` : ""}
-          </div>
-        </article>
-      </div>`;
+        </div>
+        <div class="lesson-meta-row">
+          <span class="lesson-meta-item">⏱ ${escapeHtml(lesson.duration)}</span>
+          <span class="lesson-meta-item">${done ? "✅ " + t("lesson.completed") : "📖 " + t("lesson.inProgress")}</span>
+        </div>
+        ${primerHtml}
+        <div class="lesson-body">${processedContent}</div>
+        ${seniorHtml}
+        ${resourcesHtml}
+        <div id="lesson-checklist-zone"></div>
+        <div class="lesson-actions">
+          <button class="btn btn-primary" id="btn-complete">${done ? t("lesson.unmarkComplete") : t("lesson.markComplete")}</button>
+          ${prev ? `<button class="btn btn-secondary" id="btn-prev">${t("lesson.prev")}</button>` : ""}
+          ${next ? `<button class="btn btn-secondary" id="btn-next">${t("lesson.next")}</button>` : ""}
+        </div>
+      </article>`;
+  }
 
-    // Attach copy buttons to code blocks
-    attachCopyButtons(document.getElementById("lesson-detail"));
-
-    // Render checklist if final project lesson
-    if (isFinalProject) {
-      const zone = document.getElementById("lesson-checklist-zone");
-      renderChecklist(rawTrack.id, zone);
-    }
-
+  /**
+   * Sets up lesson event listeners
+   * @param {string} lessonId - Lesson identifier
+   * @param {Object} rawLesson - Raw lesson data
+   * @param {Object} prev - Previous lesson
+   * @param {Object} next - Next lesson
+   */
+  function setupLessonEventListeners(lessonId, rawLesson, prev, next) {
     document.getElementById("btn-bookmark").addEventListener("click", () => {
       toggleBookmark(rawLesson.id);
       renderLesson(lessonId);
@@ -955,6 +1050,63 @@
     });
   }
 
+  /**
+   * Checks if lesson is a final project lesson
+   * @param {string} lessonId - Lesson identifier
+   * @param {string} courseId - Course identifier
+   * @returns {boolean} True if final project lesson
+   */
+  function isFinalProjectLesson(lessonId, courseId) {
+    return lessonId.endsWith("-l1") &&
+      (courseId === "s12" || courseId === "w10" || courseId === "a9" ||
+       courseId === "m8"  || courseId === "p8"  || courseId === "sec6" ||
+       courseId === "dev5"|| courseId === "a11y5"|| courseId === "lead4");
+  }
+
+  /**
+   * Renders lesson interface
+   * @param {string} lessonId - Lesson identifier
+   */
+  function renderLesson(lessonId) {
+    const found = findLesson(lessonId);
+    if (!found) return;
+    const { track, course, lesson, rawTrack, rawCourse, rawLesson } = found;
+    const done     = !!progress[rawLesson.id];
+    const enr      = getEnrichment(rawLesson.id);
+    const isBookmarked = bookmarks.includes(rawLesson.id);
+    const langKey  = getCurrentLangKey();
+    saveLastLesson(lessonId);
+
+    document.getElementById("lesson-track-link").textContent = track.title;
+    document.getElementById("lesson-track-link").onclick = (e) => { e.preventDefault(); navigate("track", { trackId: rawTrack.id }); };
+    document.getElementById("lesson-breadcrumb").textContent = lesson.title;
+
+    const allLessons = rawTrack.courses.flatMap((c) => c.lessons);
+    const idx   = allLessons.findIndex((l) => l.id === rawLesson.id);
+    const prev  = allLessons[idx - 1];
+    const next  = allLessons[idx + 1];
+
+    const sidebarHtml = renderLessonSidebar(track, course, rawCourse, rawLesson);
+    const contentHtml = renderLessonContent(lesson, enr, rawLesson, done, isBookmarked, langKey, prev, next);
+
+    document.getElementById("lesson-detail").innerHTML = `
+      <div class="lesson-layout">
+        ${sidebarHtml}
+        ${contentHtml}
+      </div>`;
+
+    // Attach copy buttons to code blocks
+    attachCopyButtons(document.getElementById("lesson-detail"));
+
+    // Render checklist if final project lesson
+    if (isFinalProjectLesson(rawLesson.id, rawCourse.id)) {
+      const zone = document.getElementById("lesson-checklist-zone");
+      renderChecklist(rawTrack.id, zone);
+    }
+
+    setupLessonEventListeners(lessonId, rawLesson, prev, next);
+  }
+
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
   function renderDashboard() {
@@ -967,7 +1119,7 @@
         <div class="value">${global.pct}%</div>
         <div class="progress-bar" style="margin-top:0.5rem"><div class="progress-fill" style="width:${global.pct}%"></div></div>
       </div>
-      <div class="dash-card"><h3>${lang === "en" ? "Quizzes passed" : "Quizzes aprovados"}</h3><div class="value">${passedCount}/9</div></div>
+      <div class="dash-card"><h3>${t("dashboard.quizzesPassedLabel")}</h3><div class="value">${passedCount}/9</div></div>
       <div class="dash-card"><h3>${t("dashboard.totalCost")}</h3><div class="value">${t("price")}</div></div>`;
 
     renderAchievements();
@@ -980,7 +1132,7 @@
     const bmSection = document.getElementById("dashboard-bookmarks");
     if (bmSection) {
       if (!bookmarks.length) {
-        bmSection.innerHTML = `<p class="empty-state" style="padding:1rem;color:var(--text-muted)">${lang === "en" ? "No bookmarked lessons yet." : "Nenhuma aula favoritada ainda."}</p>`;
+        bmSection.innerHTML = `<p class="empty-state" style="padding:1rem;color:var(--text-muted)">${t("dashboard.noBookmarks")}</p>`;
       } else {
         bmSection.innerHTML = bookmarks.map((lid) => {
           const found = findLesson(lid);

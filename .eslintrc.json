@@ -8,7 +8,9 @@
     "global": "readonly",
     "module": "readonly",
     "escapeHtml": "readonly",
-    "getCurrentLangKey": "readonly"
+    "getCurrentLangKey": "readonly",
+    "loadJson": "readonly",
+    "saveJson": "readonly"
   },
   "extends": [
     "eslint:recommended",
