@@ -99,6 +99,9 @@ window.TG_I18N = {
       bookmarksTitle: "Aulas Favoritas", quizzesPassed: "Quizzes aprovados",
       noBookmarks: "Nenhuma aula favoritada ainda.", complete: "Completo",
       quizzesPassedLabel: "Quizzes aprovados",
+      exportProgress: "Exportar Progresso", importProgress: "Importar Progresso",
+      exportSuccess: "Progresso exportado com sucesso!", importSuccess: "Progresso importado com sucesso!",
+      importError: "Erro ao importar progresso. Verifique o arquivo.",
     },
     toast: {
       lessonDone: "Aula concluída! 🎉", lessonUndone: "Aula desmarcada",
@@ -224,6 +227,9 @@ window.TG_I18N = {
       bookmarksTitle: "Bookmarked Lessons", quizzesPassed: "Quizzes passed",
       noBookmarks: "No bookmarked lessons yet.", complete: "Complete",
       quizzesPassedLabel: "Quizzes passed",
+      exportProgress: "Export Progress", importProgress: "Import Progress",
+      exportSuccess: "Progress exported successfully!", importSuccess: "Progress imported successfully!",
+      importError: "Error importing progress. Please check the file.",
     },
     toast: {
       lessonDone: "Lesson completed! 🎉", lessonUndone: "Lesson unmarked",

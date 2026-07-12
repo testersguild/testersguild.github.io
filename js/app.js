@@ -10,6 +10,7 @@
   const STORAGE_CHECKLISTS  = "testers-guild-checklists";
   const STORAGE_THEME       = "testers-guild-theme";
   const STORAGE_SENIOR_MODE = "testers-guild-senior-mode";
+  const STORAGE_DISCORD_BANNER = "testers-guild-discord-banner";
 
   const tracks         = window.TG_QAWAY_TRACKS    || [];
   const enOverlay      = window.TG_QAWAY_EN        || { tracks: {}, courses: {}, lessons: {} };
@@ -24,9 +25,9 @@
   window.lang = lang;
   let persona     = getStorage(STORAGE_PERSONA) || "experienced";
   let progress    = loadProgress();
-  const bookmarks   = loadJson(STORAGE_BOOKMARKS, []);
-  const quizzesPassed = loadJson(STORAGE_QUIZZES, {});
-  const checklistState = loadJson(STORAGE_CHECKLISTS, {});
+  let bookmarks   = loadJson(STORAGE_BOOKMARKS, [], window.validateBookmarksData);
+  let quizzesPassed = loadJson(STORAGE_QUIZZES, {}, window.validateQuizzesPassedData);
+  let checklistState = loadJson(STORAGE_CHECKLISTS, {});
   let theme       = getStorage(STORAGE_THEME) || "dark";
   let seniorMode  = getStorage(STORAGE_SENIOR_MODE) === "true";
   let currentView = "home";
@@ -81,7 +82,7 @@
   /**
    * Saves current progress to localStorage
    */
-  function saveProgress() { localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress)); }
+  function saveProgress() { window.saveJson(STORAGE_PROGRESS, progress); }
 
   /**
    * Saves last viewed lesson ID
@@ -191,6 +192,7 @@
     const btn = document.getElementById("senior-mode-toggle");
     if (btn) {
       btn.classList.toggle("active-toggle", seniorMode);
+      btn.setAttribute("aria-pressed", String(seniorMode));
       btn.title = seniorMode ? t("settings.seniorModeOn") : t("settings.seniorModeOff");
     }
     localStorage.setItem(STORAGE_SENIOR_MODE, String(seniorMode));
@@ -311,6 +313,31 @@
       });
     });
     return lessons;
+  }
+
+  /**
+   * Hides Discord banner and saves user preference
+   */
+  function hideDiscordBanner() {
+    const banner = document.getElementById("discord-banner");
+    if (banner) {
+      banner.classList.add("hidden");
+      localStorage.setItem(STORAGE_DISCORD_BANNER, "hidden");
+    }
+  }
+
+  /**
+   * Shows Discord banner if not hidden by user
+   */
+  function initDiscordBanner() {
+    const banner = document.getElementById("discord-banner");
+    if (banner) {
+      const isHidden = localStorage.getItem(STORAGE_DISCORD_BANNER) === "hidden";
+      if (isHidden) {
+        banner.classList.add("hidden");
+      }
+      banner.querySelector(".discord-close").addEventListener("click", hideDiscordBanner);
+    }
   }
 
   function findTrack(id) { return tracks.find((tr) => tr.id === id); }
@@ -1109,6 +1136,96 @@
 
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
+  /**
+   * Exports user progress as JSON file
+   */
+  function exportProgress() {
+    const data = {
+      progress: progress,
+      bookmarks: bookmarks,
+      quizzesPassed: quizzesPassed,
+      checklistState: checklistState,
+      persona: persona,
+      theme: theme,
+      seniorMode: seniorMode,
+      lang: lang,
+      exportDate: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `testers-guild-progress-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(t("dashboard.exportSuccess"));
+  }
+
+  /**
+   * Imports user progress from JSON file
+   * @param {File} file - JSON file to import
+   */
+  function importProgress(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        
+        // Validate data structure
+        if (typeof data !== "object" || data === null) {
+          throw new Error("Invalid data format");
+        }
+
+        // Import data with validation
+        if (data.progress && typeof data.progress === "object") {
+          progress = data.progress;
+          localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress));
+        }
+        if (Array.isArray(data.bookmarks)) {
+          bookmarks = data.bookmarks;
+          window.saveJson(STORAGE_BOOKMARKS, bookmarks);
+        }
+        if (data.quizzesPassed && typeof data.quizzesPassed === "object") {
+          quizzesPassed = data.quizzesPassed;
+          window.saveJson(STORAGE_QUIZZES, quizzesPassed);
+        }
+        if (data.checklistState && typeof data.checklistState === "object") {
+          checklistState = data.checklistState;
+          window.saveJson(STORAGE_CHECKLISTS, checklistState);
+        }
+        if (data.persona && ["beginner", "experienced", "senior"].includes(data.persona)) {
+          persona = data.persona;
+          localStorage.setItem(STORAGE_PERSONA, persona);
+        }
+        if (data.theme && ["light", "dark"].includes(data.theme)) {
+          theme = data.theme;
+          localStorage.setItem(STORAGE_THEME, theme);
+          applyTheme();
+        }
+        if (typeof data.seniorMode === "boolean") {
+          seniorMode = data.seniorMode;
+          localStorage.setItem(STORAGE_SENIOR_MODE, String(seniorMode));
+          applySeniorMode();
+        }
+        if (data.lang && ["pt", "en"].includes(data.lang)) {
+          lang = data.lang;
+          window.lang = lang;
+          localStorage.setItem(STORAGE_LANG, lang);
+        }
+
+        showToast(t("dashboard.importSuccess"));
+        renderDashboard();
+      } catch (error) {
+        console.error("Import error:", error);
+        showToast(t("dashboard.importError"));
+      }
+    };
+    reader.readAsText(file);
+  }
+
   function renderDashboard() {
     const global = getGlobalProgress();
     const passedCount = Object.keys(quizzesPassed).length;
@@ -1123,6 +1240,18 @@
       <div class="dash-card"><h3>${t("dashboard.totalCost")}</h3><div class="value">${t("price")}</div></div>`;
 
     renderAchievements();
+
+    // Setup export/import buttons
+    document.getElementById("btn-export-progress").addEventListener("click", exportProgress);
+    document.getElementById("btn-import-progress").addEventListener("click", () => {
+      document.getElementById("import-file-input").click();
+    });
+    document.getElementById("import-file-input").addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        importProgress(e.target.files[0]);
+        e.target.value = ""; // Reset file input
+      }
+    });
 
     const grid = document.getElementById("dashboard-tracks");
     grid.innerHTML = "";
@@ -1260,6 +1389,7 @@
   applyStaticI18n();
   updateLangToggle();
   checkAchievements();
+  initDiscordBanner();
   renderHome();
 
 })();

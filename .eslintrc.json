@@ -10,7 +10,10 @@
     "escapeHtml": "readonly",
     "getCurrentLangKey": "readonly",
     "loadJson": "readonly",
-    "saveJson": "readonly"
+    "saveJson": "readonly",
+    "validateProgressData": "readonly",
+    "validateBookmarksData": "readonly",
+    "validateQuizzesPassedData": "readonly"
   },
   "extends": [
     "eslint:recommended",
